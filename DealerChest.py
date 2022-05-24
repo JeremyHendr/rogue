@@ -21,6 +21,7 @@ class DealerChest(Chest):
                 print("already in inventory or not enough gold")
 
     def price(self,e):
+        from utiles import theGame
         #return the price of the element e, supposed to be in self.content
         #price based on rarity +1 *10
         for l in theGame().equipments.items():

@@ -34,6 +34,6 @@ class Room:
         c = self.randEmptyCoord(map)
         map.put(c, theGame().randEquipment())
         c = self.randEmptyCoord(map)
-        while hero_pos.distance(c) < 2:
+        while hero_pos.distance(c) < 3:
             c = self.randEmptyCoord(map)
-        map.put(c, theGame().randMonster())
+        map.put(c,theGame().randMonster())
