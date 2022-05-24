@@ -1,3 +1,5 @@
+from Equipment import Equipment
+from utiles import theGame
 class Weapon(Equipment):
     def __init__(self,name,abr=False,incr=0):
         Equipment.__init__(self,name,abr,False)

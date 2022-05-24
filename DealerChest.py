@@ -1,3 +1,7 @@
+from Chest import Chest
+from Hero import Hero
+from utiles import theGame
+from Element import Element
 class DealerChest(Chest):
     def __init__(self,name="Chest",abbr=False,content=[]):
         Chest.__init__(self,name,abbr,content)

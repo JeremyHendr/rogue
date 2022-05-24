@@ -1,3 +1,13 @@
+from Equipment import Equipment
+from Weapon import Weapon
+from Armor import Armor
+from Creature import Creature
+from Coord import Coord
+from Hero import Hero
+from Map import Map
+from Stairs import Stairs
+from utiles import heal,teleport,theGame,cheat_hp,cheat_str,getch
+import random,copy
 class Game():
     equipments = {  0: [Equipment("gold","o"),Equipment("heal potion","!",True,lambda creature,rv=False: heal(creature,30)), Equipment("telepotion","!",True,lambda creature,rv=False: teleport(creature))],
                     1: [Weapon("stick","|",10)],

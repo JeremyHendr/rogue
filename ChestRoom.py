@@ -1,5 +1,7 @@
 from Room import Room
 from utiles import theGame
+from Map import Map
+from Chest import Chest
 class ChestRoom(Room):
     def __init__(self,cc1,cc2):
         Room.__init__(self,cc1,cc2)

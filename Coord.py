@@ -1,4 +1,4 @@
-
+import math
 class Coord:
     def __init__(self,x,y):
         # print("in coord")

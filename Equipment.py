@@ -1,3 +1,7 @@
+from Element import Element
+from Map import Map
+from Hero import Hero
+from utiles import theGame
 class Equipment(Element):
     def __init__(self,name,abr=False,unique=True,usage=None):
         Element.__init__(self,name,abr)

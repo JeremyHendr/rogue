@@ -1,2 +1,2 @@
-import utiles.py
+from utiles import theGame
 theGame().play()

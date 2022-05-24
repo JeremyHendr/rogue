@@ -1,3 +1,6 @@
+from Coord import Coord
+from utiles import theGame
+import random
 class Room:
     def __init__(self,cc1,cc2):
         self.c1=cc1

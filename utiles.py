@@ -1,3 +1,6 @@
+from Hero import Hero
+from Game import Game
+import random
 def heal(creature,hp):
     print("-> In heal")
     creature.hp += hp

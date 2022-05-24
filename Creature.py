@@ -1,3 +1,7 @@
+from Element import Element
+from utiles import theGame
+from Hero import Hero
+import math
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, damagetype=None):
         Element.__init__(self, name, abr)

@@ -1,3 +1,13 @@
+from Coord import Coord
+from Hero import Hero
+from Element import Element
+from Room import Room
+from ChestRoom import ChestRoom
+from ShopRoom import ShopRoom
+from Creature import Creature
+from Equipment import Equipment
+from utiles import theGame
+import random
 class Map:
     ground = "."
     empty = " "

@@ -1,3 +1,8 @@
+from Creature import Creature
+from Weapon import Weapon
+from Armor import Armor
+from Equipment import Equipment
+from utiles import theGame,heal
 class Hero(Creature):
     def __init__(self, name="Hero", abbrv="@", hp=100, maxhp=100, strength=20, inventory=None, max_invent=10, maxmana=20):
         Creature.__init__(self, name, hp, abbrv, strength)

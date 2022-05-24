@@ -1,3 +1,7 @@
+from Room import Room
+from Map import Map
+from DealerChest import DealerChest
+from utiles import theGame
 class ShopRoom(Room):
     def __init__(self,cc1,cc2):
         Room.__init__(self,cc1,cc2)
