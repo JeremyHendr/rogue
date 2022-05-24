@@ -1,12 +1,12 @@
 from Chest import Chest
-from Hero import Hero
-from utiles import theGame
-from Element import Element
 class DealerChest(Chest):
     def __init__(self,name="Chest",abbr=False,content=[]):
         Chest.__init__(self,name,abbr,content)
 
     def meet(self,creature):
+        from Hero import Hero
+        from utiles import theGame
+        from Element import Element
         # print("-> In meet dealerChest with",self,creature)
         if isinstance(creature,Hero):
             print("Prices are: "+"  ".join([x.name+": "+str(self.price(x)) for x in self.content])) #laisser ce print

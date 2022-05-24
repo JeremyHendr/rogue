@@ -1,6 +1,4 @@
 from Element import Element
-from utiles import theGame
-from Hero import Hero
 import math
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, damagetype=None):
@@ -17,6 +15,8 @@ class Creature(Element):
         return s+"("+str(self.hp)+")"
 
     def meet(self,other):
+        from utiles import theGame
+        from Hero import Hero
         print("-> In meet",self,other)
         print(other.damage_type,self.state)
         if other._strength-self.armor > 0:

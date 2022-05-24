@@ -1,10 +1,9 @@
 from Creature import Creature
-from Weapon import Weapon
-from Armor import Armor
-from Equipment import Equipment
-from utiles import theGame,heal
+
 class Hero(Creature):
     def __init__(self, name="Hero", abbrv="@", hp=100, maxhp=100, strength=20, inventory=None, max_invent=10, maxmana=20):
+        from Weapon import Weapon
+        from Armor import Armor
         Creature.__init__(self, name, hp, abbrv, strength)
         if inventory == None:
             self._inventory = []
@@ -29,6 +28,8 @@ class Hero(Creature):
         self.hp = b
 
     def take(self,elem):
+        from Equipment import Equipment
+        from utiles import theGame
         if not isinstance(elem,Equipment):
             raise TypeError("not an Equipement",elem)
         name_inventory = [x.name for x in self._inventory]
@@ -69,6 +70,9 @@ class Hero(Creature):
         return a
 
     def use(self,item):
+        from Weapon import Weapon
+        from Armor import Armor
+        from Equipment import Equipment
         print("in hero use, with item",item)
         if item == None:
             return None
@@ -94,6 +98,7 @@ class Hero(Creature):
         self.hp = self.max_hp
 
     def updateXp(self,incr):
+        from utiles import theGame
         print("-> In update XP  enter hero",self.xp,self.level)
         self.xp += incr
         list_key = [key for key in theGame().level_bonus.keys()]
@@ -110,6 +115,7 @@ class Hero(Creature):
         print("exit hero", self.xp, self.level)
 
     def updateMana(self,incr):
+        from utiles import theGame
         print("-> In updateMana  enter hero", self.mana,"/",self.max_mana)
         if self.mana+incr <= self.max_mana:
             self.mana += incr
@@ -119,6 +125,7 @@ class Hero(Creature):
                 theGame().addMessage("The hero used " + str(incr) + " mana he has now"+str(self.mana)+"/"+str(self.max_mana))
 
     def healSkill(self):
+        from utiles import theGame,heal
         if self.mana >= 10:
             self.mana -= 10
             heal(self,50)
@@ -126,6 +133,7 @@ class Hero(Creature):
                 theGame()._floor.moveAllMonsters()
 
     def damageSkill(self):
+        from utiles import theGame
         if self.mana >= 10:
             self.mana -= 10
             hero_pos = theGame()._floor.pos(self)

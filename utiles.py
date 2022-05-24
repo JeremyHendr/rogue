@@ -1,7 +1,8 @@
-from Hero import Hero
+
 from Game import Game
 import random
 def heal(creature,hp):
+    from Hero import Hero
     print("-> In heal")
     creature.hp += hp
     if isinstance(creature,Hero) and creature.hp > creature.max_hp:

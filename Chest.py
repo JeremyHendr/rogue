@@ -1,6 +1,4 @@
 from Element import Element
-from Hero import Hero
-from utiles import theGame
 class Chest(Element):
     def __init__(self,name="Chest",abbr=False,content=[]):
         Element.__init__(self,name,abbr)
@@ -11,6 +9,8 @@ class Chest(Element):
         return "<"+self.name+" "+str(el.name for el in self.content)+">"
 
     def meet(self,creature):
+        from Hero import Hero
+        from utiles import theGame
         if isinstance(creature,Hero):
             elem = theGame().select(self.content)
             if isinstance(elem,Element) and creature.take(elem):

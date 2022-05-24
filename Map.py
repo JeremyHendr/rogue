@@ -1,13 +1,7 @@
 from Coord import Coord
 from Hero import Hero
-from Element import Element
-from Room import Room
-from ChestRoom import ChestRoom
-from ShopRoom import ShopRoom
-from Creature import Creature
-from Equipment import Equipment
-from utiles import theGame
 import random
+
 class Map:
     ground = "."
     empty = " "
@@ -60,6 +54,7 @@ class Map:
             raise  IndexError('Out of map coord',c)
 
     def checkElement(self,e):
+        from Element import Element
         if not isinstance(e,Element):
             raise TypeError('Not a Element',e)
 
@@ -149,6 +144,9 @@ class Map:
         return Coord(x1,y1),Coord(x2,y2)
 
     def generateRooms(self,n):
+        from Room import Room
+        from ChestRoom import ChestRoom
+        from ShopRoom import ShopRoom
         for i in range(n):
             # print("-> In generateRooms",n)
             choice = random.choices(["room","chest_room","waepon_dealer_room"],[8,2,2])[0]
@@ -164,6 +162,9 @@ class Map:
                 self.addRoom(roomido)
 
     def move(self,e,way):
+        from Creature import Creature
+        from Equipment import Equipment
+        from utiles import theGame
         """Moves the element e in the direction way."""
         print("-> In move with",e,way,e.state)
         statetodelete = []
@@ -182,13 +183,11 @@ class Map:
                     e.state[l[0]]["time"] -= 1
                 else:
                     statetodelete.append(l[0])
-
         for state in statetodelete:
             e.state.pop(state)
         if e.hp <= 0:
             self.rm(e)
             theGame().addMessage("The creature " + str(e) + " is dead")
-
         else:
             orig = self.pos(e)
             dest = orig + way
@@ -219,6 +218,7 @@ class Map:
                         self.hidden_elem.pop(self.hidden_elem.index(elem))
 
     def moveAllMonsters(self):
+        from Creature import Creature
         for obj in self._elem:
             if isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6:
                 self.move(obj, self._elem[obj].direction(self._elem[self._hero]))

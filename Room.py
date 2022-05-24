@@ -1,5 +1,4 @@
 from Coord import Coord
-from utiles import theGame
 import random
 class Room:
     def __init__(self,cc1,cc2):
@@ -30,6 +29,7 @@ class Room:
         return a
 
     def decorate(self,map):
+        from utiles import theGame
         hero_pos = map.pos(map._hero)
         c = self.randEmptyCoord(map)
         map.put(c, theGame().randEquipment())

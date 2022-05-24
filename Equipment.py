@@ -1,7 +1,5 @@
 from Element import Element
-from Map import Map
 from Hero import Hero
-from utiles import theGame
 class Equipment(Element):
     def __init__(self,name,abr=False,unique=True,usage=None):
         Element.__init__(self,name,abr)
@@ -9,6 +7,8 @@ class Equipment(Element):
         self.unique = unique
 
     def meet(self,hero):
+        from Map import Map
+        from utiles import theGame
         if self._abbrv != Map.ground and isinstance(hero,Hero):
             if hero.take(self):
                 theGame().addMessage("You pick up a "+self.name)
@@ -16,6 +16,7 @@ class Equipment(Element):
         return False
 
     def use(self,creature):
+        from utiles import theGame
         print("-> In item use, with item",self.name,"unique:",self.unique,"avec creature",creature)
 
         if self.usage != None:
