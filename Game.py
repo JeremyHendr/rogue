@@ -21,7 +21,7 @@ class Game():
                     1: [Creature("Ork", 60, strength=20), Creature("Blob", 100),
                         Creature("Spyder", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 5}])],
                     5: [Creature("Stone Dragon", 200, "SD", strength=30),
-                        Creature("Fire Dragon", 200, "FD", 10, damagetype=["burn", {"time": 5, "damage": 10}])],
+                        Creature("Fire Dragon", 200, "FD", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
                     50: [Creature("Zeus", 1000, strength=50)]}
         self._actions = {"z": lambda hero: self._floor.move(hero, Coord(0, -1)),
                     "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
@@ -123,5 +123,8 @@ class Game():
                     print("Be careful if you REMOVE an item from your inventory you CANT get it back")
                 self._actions[c](self._hero)
                 self._floor.moveAllMonsters()
+            for monster in self._floor._elem:
+                if isinstance(monster,Creature):
+                    monster.updateState()
         print(self._hero.playDescription())
         print("--- Game Over ---")

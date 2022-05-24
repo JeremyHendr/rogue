@@ -32,3 +32,24 @@ class Creature(Element):
                 other.updateMana(int(math.log(self.xp_value/100)*2))
             return True
         return False
+
+    def updateState(self):
+        statetodelete = []
+        for dic in self.state.items():
+            # print("state loop",state,state[0])
+            if dic[0] == "poisoned":
+                self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor))
+                self.state[dic[0]]["damage"] += self.state[dic[0]]["damage"]
+                if self.state[dic[0]]["time"] > 0:
+                    self.state[dic[0]]["time"] -= 1
+                else:
+                    statetodelete.append(dic[0])
+            elif dic[0] == "burning":
+                self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor))
+            elif dic[0] == "frozen":
+                if self.state[dic[0]]["time"] > 0:
+                    self.state[dic[0]]["time"] -= 1
+                else:
+                    statetodelete.append(dic[0])
+        for state in statetodelete:
+            self.state.pop(state)

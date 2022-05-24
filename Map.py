@@ -167,55 +167,33 @@ class Map:
         from utiles import theGame
         """Moves the element e in the direction way."""
         print("-> In move with",e,way,e.state)
-        statetodelete = []
-        for l in e.state.items():
-            # print("state loop",state,state[0])
-            if l[0] == "poisoned":
-                e.meet(Creature("poison",0,"",l[1]["damage"]+e.armor))
-                e.state[l[0]]["damage"] += e.state[l[0]]["damage"]
-                if e.state[l[0]]["time"] > 0:
-                    e.state[l[0]]["time"] -= 1
-                else:
-                    statetodelete.append(l[0])
-            elif l[0] == "burn":
-                e.meet(Creature("fire", 0, "", l[1]["damage"]+e.armor))
-                if e.state[l[0]]["time"] > 0:
-                    e.state[l[0]]["time"] -= 1
-                else:
-                    statetodelete.append(l[0])
-        for state in statetodelete:
-            e.state.pop(state)
-        if e.hp <= 0:
-            self.rm(e)
-            theGame().addMessage("The creature " + str(e) + " is dead")
-        else:
-            orig = self.pos(e)
-            dest = orig + way
-            if dest in self and not "frozen" in e.state:
-                if self.get(dest) == Map.ground:
-                    self._mat[orig.y][orig.x] = Map.ground
-                    self._mat[dest.y][dest.x] = e
-                    self._elem[e] = dest
-                elif self.get(dest) != Map.empty:
-                    if self.get(dest).meet(e): #si l'elem a ete mis dans l'inventaire ou le monstre tue
-                        if not isinstance(self.get(dest),Creature): #si c'est pas un monstre on suppr la dest puis on bouge
-                            self.rm(dest)
-                            self._mat[orig.y][orig.x] = Map.ground
-                            self._mat[dest.y][dest.x] = e
-                            self._elem[e] = dest
-                        else: #si c'est un monstre on supprime juste la dest
-                            self.rm(dest)
-                    elif isinstance(self.get(dest), Equipment):
-                        # print("hidden elem append",self.get(dest),type(self.get(dest)),self.get(dest) in self._elem,self._elem)
-                        self.hidden_elem.append([dest, self.get(dest)])
-                        self._mat[dest.y][dest.x] = Map.ground
+        orig = self.pos(e)
+        dest = orig + way
+        if dest in self and not "frozen" in e.state:
+            if self.get(dest) == Map.ground:
+                self._mat[orig.y][orig.x] = Map.ground
+                self._mat[dest.y][dest.x] = e
+                self._elem[e] = dest
+            elif self.get(dest) != Map.empty:
+                if self.get(dest).meet(e): #si l'elem a ete mis dans l'inventaire ou le monstre tue
+                    if not isinstance(self.get(dest),Creature): #si c'est pas un monstre on suppr la dest puis on bouge
+                        self.rm(dest)
                         self._mat[orig.y][orig.x] = Map.ground
                         self._mat[dest.y][dest.x] = e
                         self._elem[e] = dest
-                for elem in self.hidden_elem:
-                    if self.get(elem[0]) == Map.ground:
-                        self._mat[elem[0].y][elem[0].x]=elem[1]
-                        self.hidden_elem.pop(self.hidden_elem.index(elem))
+                    else: #si c'est un monstre on supprime juste la dest
+                        self.rm(dest)
+                elif isinstance(self.get(dest), Equipment):
+                    # print("hidden elem append",self.get(dest),type(self.get(dest)),self.get(dest) in self._elem,self._elem)
+                    self.hidden_elem.append([dest, self.get(dest)])
+                    self._mat[dest.y][dest.x] = Map.ground
+                    self._mat[orig.y][orig.x] = Map.ground
+                    self._mat[dest.y][dest.x] = e
+                    self._elem[e] = dest
+            for elem in self.hidden_elem:
+                if self.get(elem[0]) == Map.ground:
+                    self._mat[elem[0].y][elem[0].x]=elem[1]
+                    self.hidden_elem.pop(self.hidden_elem.index(elem))
 
     def moveAllMonsters(self):
         from Creature import Creature

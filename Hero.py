@@ -85,6 +85,7 @@ class Hero(Creature):
             item.use(self)
 
     def removeInventory(self,item):
+        from utiles import theGame
         if item == None:
             return None
         if item.name==self.base_protection.name or item.name==self.base_weapon.name:
