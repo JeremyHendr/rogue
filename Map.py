@@ -5,6 +5,8 @@ import random
 class Map:
     ground = "."
     empty = " "
+    horizontalwall = "▬"
+    verticalwall = "█" #█ 219, ▄ 220, ▬ 22
     dir = {'z': Coord(0,-1),
                 's': Coord(0,1),
                 'd': Coord(1,0),
@@ -23,6 +25,7 @@ class Map:
        # self._mat[self.poos.y][self.poos.x] = self._hero
         self.generateRooms(nbrooms)
         self.reachAllRooms()
+        self.putWalls()
         self.hidden_elem = []
         self.damage_done = []
 
@@ -87,16 +90,22 @@ class Map:
         del self._elem[self.get(c)]
         self._mat[c.y][c.x] = Map.ground
 
-    def addRoom(self,room1):
-        self._roomsToReach.append(room1)
-        a=-1
-        for i in self._mat:
-            a+=1
-            b=0
-            for k in i:
-                if a>=room1.c1.x and a<=room1.c2.x and b>=room1.c1.y and b<=room1.c2.y:
-                    self._mat[b][a] = Map.ground
-                b+=1
+    def addRoom(self,room):
+        # self._roomsToReach.append(room1)
+        # a=-1
+        # for lines in self._mat:
+        #     a+=1
+        #     b=0
+        #     for case in lines:
+        #         if a>=room1.c1.x and a<=room1.c2.x and b>=room1.c1.y and b<=room1.c2.y:
+        #             self._mat[b][a] = Map.ground
+        #         b+=1
+        self._roomsToReach.append(room)
+        for x in range(len(self)):
+            for y in range(len(self)):
+                if Coord(x,y) in room:
+                    self._mat[y][x] = Map.ground
+
 
     def findRoom(self,coord):
         for i in self._roomsToReach:
@@ -130,6 +139,7 @@ class Map:
         self.corridor(random.choice(self._rooms).center(), random.choice(self._roomsToReach).center())
 
     def reachAllRooms(self):
+        """used to link all rooms with corridors"""
         if len(self._roomsToReach) == 0:
             return None
         self._rooms.append(self._roomsToReach.pop(0))
@@ -145,11 +155,15 @@ class Map:
         return Coord(x1,y1),Coord(x2,y2)
 
     def generateRooms(self,n):
+        """
+        Add between 0 and n rooms to roomsToReach
+        :param n: maximum number of rooms
+        """
         from Room import Room
         from ChestRoom import ChestRoom
         from ShopRoom import ShopRoom
+        # print("-> In generateRooms",n)
         for i in range(n):
-            # print("-> In generateRooms",n)
             choice = random.choices(["room","chest_room","waepon_dealer_room"],[8,2,2])[0]
             # print("choice",choice)
             c = self.randRoomCoord()
@@ -162,15 +176,42 @@ class Map:
             if self.intersectNone(roomido):
                 self.addRoom(roomido)
 
+    def putWalls(self):
+        # put walls around this Coord
+        print("-> In putWalls")
+        print(self)
+        from Coord import Coord
+        walls = [Map.verticalwall,Map.horizontalwall,"#"]
+        for x in range(len(self)):
+            for y in range(len(self)):
+                if Coord(x,y) in self and self.get(Coord(x,y)) == Map.empty:
+                    if Coord(x+1,y) in self and self.get(Coord(x+1,y)) != Map.empty and not self.get(Coord(x+1,y)) in walls:
+                        self._mat[y][x] = Map.verticalwall
+                    elif Coord(x-1,y) in self and self.get(Coord(x-1,y)) != Map.empty and not self.get(Coord(x-1,y)) in walls:
+                        self._mat[y][x] = Map.verticalwall
+                    elif Coord(x,y+1) in self and self.get(Coord(x,y+1)) != Map.empty and not self.get(Coord(x,y+1)) in walls:
+                        self._mat[y][x] = Map.horizontalwall
+                    elif Coord(x, y-1) in self and self.get(Coord(x,y-1)) != Map.empty and not self.get(Coord(x,y-1)) in walls:
+                        self._mat[y][x] = Map.horizontalwall
+
+                    elif Coord(x-1,y-1) in self and self.get(Coord(x-1,y-1)) != Map.empty and not self.get(Coord(x-1,y-1)) in walls:
+                        self._mat[y][x] = "#"
+                    elif Coord(x-1,y+1) in self and self.get(Coord(x-1,y+1)) != Map.empty and not self.get(Coord(x-1,y+1)) in walls:
+                        self._mat[y][x] = "#"
+                    elif Coord(x+1,y-1) in self and self.get(Coord(x+1,y-1)) != Map.empty and not self.get(Coord(x+1,y-1)) in walls:
+                        self._mat[y][x] = "#"
+                    elif Coord(x+1,y+1) in self and self.get(Coord(x+1,y+1)) != Map.empty and not self.get(Coord(x+1,y+1)) in walls:
+                        self._mat[y][x] = "#"
+
     def move(self,e,way):
         from Creature import Creature
         from Equipment import Equipment
         from utiles import theGame
         """Moves the element e in the direction way."""
-        print("-> In move with",e,way,e.state)
+        # print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        if dest in self and not "frozen" in e.state:
+        if dest in self and not "frozen" in e.state and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
             if self.get(dest) == Map.ground:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
