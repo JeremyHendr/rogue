@@ -24,6 +24,7 @@ class Map:
         self.generateRooms(nbrooms)
         self.reachAllRooms()
         self.hidden_elem = []
+        self.damage_done = []
 
     def __repr__(self):
         rep = ""
