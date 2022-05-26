@@ -163,19 +163,30 @@ class Map:
         from Room import Room
         from ChestRoom import ChestRoom
         from ShopRoom import ShopRoom
+        from Coord import Coord
         # print("-> In generateRooms",n)
-        for i in range(n):
-            choice = random.choices(["room","chest_room","waepon_dealer_room"],[8,2,2])[0]
+        c = self.randRoomCoord()
+        spawnroom = ChestRoom(c[0], Coord(min(c[1].x,c[0].x+2), min(c[1].y,c[0].y+2)))
+        if self.intersectNone(spawnroom):
+            self.addRoom(spawnroom)
+        for i in range(n-1):
+            choice = random.choices(["room","chest_room","waepon_dealer_room"],[10,2,2])[0]
             # print("choice",choice)
             c = self.randRoomCoord()
             if choice == "room":
                 roomido = Room(c[0], c[1])
             elif choice == "chest_room":
-                roomido = ChestRoom(c[0], c[1])
+                roomido = ChestRoom(c[0], Coord(c[0].x+2,c[0].y+2))
             elif choice == "waepon_dealer_room":
-                roomido = ShopRoom(c[0], c[1])
+                roomido = ShopRoom(c[0], Coord(c[0].x+2,c[0].y+2))
             if self.intersectNone(roomido):
                 self.addRoom(roomido)
+        for x in range(100):
+            c = self.randRoomCoord()
+            stairsroom = ChestRoom(c[0], Coord(c[0].x + 2, c[0].y + 2))
+            if self.intersectNone(stairsroom):
+                self.addRoom(stairsroom)
+                break
 
     def putWalls(self):
         # put walls around this Coord
@@ -212,13 +223,13 @@ class Map:
         # print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        if dest in self and not "frozen" in e.state and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
-            if self.get(dest) == Map.ground:
+        if dest in self and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
+            if self.get(dest) == Map.ground and not "frozen" in e.state:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
                 self._elem[e] = dest
-            elif self.get(dest) != Map.empty:
-                if self.get(dest).meet(e): #si l'elem a ete mis dans l'inventaire ou le monstre tue
+            elif self.get(dest) != Map.empty and not "frozen" in e.state:
+                if self.get(dest).meet(e) : #si l'elem a ete mis dans l'inventaire ou le monstre tue
                     if not isinstance(self.get(dest),Creature): #si c'est pas un monstre on suppr la dest puis on bouge
                         self.rm(dest)
                         self._mat[orig.y][orig.x] = Map.ground
@@ -233,6 +244,10 @@ class Map:
                     self._mat[orig.y][orig.x] = Map.ground
                     self._mat[dest.y][dest.x] = e
                     self._elem[e] = dest
+            elif isinstance(self.get(dest),Creature) and "frozen" in e.state:
+                if self.get(dest).meet(e):
+                    self.rm(dest)
+
             for elem in self.hidden_elem:
                 if self.get(elem[0]) == Map.ground:
                     self._mat[elem[0].y][elem[0].x]=elem[1]

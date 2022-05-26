@@ -1,5 +1,5 @@
 from Element import Element
-import math
+import math,copy
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, damagetype=None):
         Element.__init__(self, name, abr)
@@ -24,7 +24,7 @@ class Creature(Element):
             theGame()._floor.damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-self.armor})
             theGame().addMessage("The "+str(other.name)+" hits the "+str(self.description()))
         if other.damage_type != None:
-            self.state[other.damage_type[0]]=other.damage_type[1]
+            self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])
             theGame().addMessage(self.name+" is "+" ".join([x for x in self.state.keys()]))
         if self.hp <= 0:
             if isinstance(other, Hero):
