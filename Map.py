@@ -7,12 +7,13 @@ class Map:
     empty = " "
     horizontalwall = "▬"
     verticalwall = "█" #█ 219, ▄ 220, ▬ 22
+    corner = "#"
     dir = {'z': Coord(0,-1),
                 's': Coord(0,1),
                 'd': Coord(1,0),
                 'q': Coord(-1,0)}
 
-    def __init__(self,size=20,hero=Hero(),nbrooms=7):
+    def __init__(self,size=23,hero=Hero(),nbrooms=7):
         self.nbrooms = nbrooms
         self.size = size
         self._hero = hero
@@ -148,10 +149,10 @@ class Map:
 
     def randRoomCoord(self):
         """create a room with a random size on random coord"""
-        x1 = random.randint(0,len(self) - 3)
-        y1 = random.randint(0,len(self) - 3)
-        x2 = min(len(self._mat)-1,x1+random.randint(3,8))
-        y2 = min(len(self._mat)-1,y1+random.randint(3,8))
+        x1 = random.randint(1,len(self) - 3)
+        y1 = random.randint(1,len(self) - 3)
+        x2 = min(len(self)-2,x1+random.randint(3,8))
+        y2 = min(len(self)-2,y1+random.randint(3,8))
         return Coord(x1,y1),Coord(x2,y2)
 
     def generateRooms(self,n):
@@ -181,27 +182,27 @@ class Map:
         print("-> In putWalls")
         print(self)
         from Coord import Coord
-        walls = [Map.verticalwall,Map.horizontalwall,"#"]
+        walls = [Map.verticalwall,Map.horizontalwall,Map.corner]
         for x in range(len(self)):
             for y in range(len(self)):
                 if Coord(x,y) in self and self.get(Coord(x,y)) == Map.empty:
-                    if Coord(x+1,y) in self and self.get(Coord(x+1,y)) != Map.empty and not self.get(Coord(x+1,y)) in walls:
+                    if Coord(x+1,y) in self and self.get(Coord(x+1,y)) != Map.empty and not self.get(Coord(x+1,y)) in walls: #left wall
                         self._mat[y][x] = Map.verticalwall
-                    elif Coord(x-1,y) in self and self.get(Coord(x-1,y)) != Map.empty and not self.get(Coord(x-1,y)) in walls:
+                    elif Coord(x-1,y) in self and self.get(Coord(x-1,y)) != Map.empty and not self.get(Coord(x-1,y)) in walls: #right wall
                         self._mat[y][x] = Map.verticalwall
-                    elif Coord(x,y+1) in self and self.get(Coord(x,y+1)) != Map.empty and not self.get(Coord(x,y+1)) in walls:
+                    elif Coord(x,y+1) in self and self.get(Coord(x,y+1)) != Map.empty and not self.get(Coord(x,y+1)) in walls: #top wall
                         self._mat[y][x] = Map.horizontalwall
-                    elif Coord(x, y-1) in self and self.get(Coord(x,y-1)) != Map.empty and not self.get(Coord(x,y-1)) in walls:
+                    elif Coord(x, y-1) in self and self.get(Coord(x,y-1)) != Map.empty and not self.get(Coord(x,y-1)) in walls: #bottom wall
                         self._mat[y][x] = Map.horizontalwall
 
-                    elif Coord(x-1,y-1) in self and self.get(Coord(x-1,y-1)) != Map.empty and not self.get(Coord(x-1,y-1)) in walls:
-                        self._mat[y][x] = "#"
-                    elif Coord(x-1,y+1) in self and self.get(Coord(x-1,y+1)) != Map.empty and not self.get(Coord(x-1,y+1)) in walls:
-                        self._mat[y][x] = "#"
-                    elif Coord(x+1,y-1) in self and self.get(Coord(x+1,y-1)) != Map.empty and not self.get(Coord(x+1,y-1)) in walls:
-                        self._mat[y][x] = "#"
-                    elif Coord(x+1,y+1) in self and self.get(Coord(x+1,y+1)) != Map.empty and not self.get(Coord(x+1,y+1)) in walls:
-                        self._mat[y][x] = "#"
+                    elif Coord(x-1,y-1) in self and self.get(Coord(x-1,y-1)) != Map.empty and not self.get(Coord(x-1,y-1)) in walls: #rigth bottom corner
+                        self._mat[y][x] = Map.corner
+                    elif Coord(x-1,y+1) in self and self.get(Coord(x-1,y+1)) != Map.empty and not self.get(Coord(x-1,y+1)) in walls: #rigth top corner
+                        self._mat[y][x] = Map.corner
+                    elif Coord(x+1,y-1) in self and self.get(Coord(x+1,y-1)) != Map.empty and not self.get(Coord(x+1,y-1)) in walls: #left bottom corner
+                        self._mat[y][x] = Map.corner
+                    elif Coord(x+1,y+1) in self and self.get(Coord(x+1,y+1)) != Map.empty and not self.get(Coord(x+1,y+1)) in walls: #left top corner
+                        self._mat[y][x] = Map.corner
 
     def move(self,e,way):
         from Creature import Creature
