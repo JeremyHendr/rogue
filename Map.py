@@ -3,11 +3,11 @@ from Hero import Hero
 import random
 
 class Map:
+    # https://theasciicode.com.ar/extended-ascii-code/box-drawings-double-line-vertical-left-character-ascii-code-185.html
+    #alt+ 200:╚ 201:╔  196─ '┬┬┴ 192└ 191┐ ¢ 188╝ 187╗ 186║  █ 219, ▄ 220, ▬ 22
     ground = "."
     empty = " "
-    horizontalwall = "▬"
-    verticalwall = "█" #█ 219, ▄ 220, ▬ 22
-    corner = "#"
+    walllist = ["║", "═", "╝", "╚", "╗", "╔", "╠", "╣", "╩", "╦", "╬", "#","¤"]
     dir = {'z': Coord(0,-1),
                 's': Coord(0,1),
                 'd': Coord(1,0),
@@ -107,7 +107,6 @@ class Map:
                 if Coord(x,y) in room:
                     self._mat[y][x] = Map.ground
 
-
     def findRoom(self,coord):
         for i in self._roomsToReach:
             if coord in i:
@@ -149,10 +148,11 @@ class Map:
 
     def randRoomCoord(self):
         """create a room with a random size on random coord"""
-        x1 = random.randint(1,len(self) - 3)
-        y1 = random.randint(1,len(self) - 3)
+        x1 = random.randint(1,len(self)-5)
+        y1 = random.randint(1,len(self)-5)
         x2 = min(len(self)-2,x1+random.randint(3,8))
         y2 = min(len(self)-2,y1+random.randint(3,8))
+        print(Coord(x1,y1),Coord(x2,y2))
         return Coord(x1,y1),Coord(x2,y2)
 
     def generateRooms(self,n):
@@ -170,7 +170,7 @@ class Map:
         if self.intersectNone(spawnroom):
             self.addRoom(spawnroom)
         for i in range(n-1):
-            choice = random.choices(["room","chest_room","waepon_dealer_room"],[10,2,2])[0]
+            choice = random.choices(["room","chest_room","waepon_dealer_room"],[10,1,1])[0]
             # print("choice",choice)
             c = self.randRoomCoord()
             if choice == "room":
@@ -188,32 +188,71 @@ class Map:
                 self.addRoom(stairsroom)
                 break
 
-    def putWalls(self):
-        # put walls around this Coord
-        print("-> In putWalls")
-        print(self)
+    def surroundingElementsCoord(self,c):
         from Coord import Coord
-        walls = [Map.verticalwall,Map.horizontalwall,Map.corner]
+        for x in (c.x-1,c.x+1):
+            for y in (c.y-1,c.y+1):
+                if Coord(x,y) in self and not Coord(x,y) == c and self.get(Coord(x,y)) != Map.empty and self.get(Coord(x,y)) != "#":
+                    return True
+
+    def surroundingWallsCardinal(self,c):
+        from Coord import Coord
+        l = []
+        # print("-> In suroundingwall with",c,self.get(c))
+        card_coord = [Coord(c.x-1,c.y),Coord(c.x+1,c.y),Coord(c.x,c.y-1),Coord(c.x,c.y+1)]
+        for coord in card_coord:
+            if coord in self and self.get(coord) in Map.walllist:
+                dir_coord = coord-c
+                if  dir_coord == Coord(1,0):
+                    l.append("E")
+                elif dir_coord == Coord(-1,0):
+                    l.append("O")
+                elif dir_coord == Coord(0,1):
+                    l.append("S")
+                elif dir_coord == Coord(0,-1):
+                    l.append("N")
+        return l
+
+    def putWalls(self):
+        from Coord import Coord
         for x in range(len(self)):
             for y in range(len(self)):
-                if Coord(x,y) in self and self.get(Coord(x,y)) == Map.empty:
-                    if Coord(x+1,y) in self and self.get(Coord(x+1,y)) != Map.empty and not self.get(Coord(x+1,y)) in walls: #left wall
-                        self._mat[y][x] = Map.verticalwall
-                    elif Coord(x-1,y) in self and self.get(Coord(x-1,y)) != Map.empty and not self.get(Coord(x-1,y)) in walls: #right wall
-                        self._mat[y][x] = Map.verticalwall
-                    elif Coord(x,y+1) in self and self.get(Coord(x,y+1)) != Map.empty and not self.get(Coord(x,y+1)) in walls: #top wall
-                        self._mat[y][x] = Map.horizontalwall
-                    elif Coord(x, y-1) in self and self.get(Coord(x,y-1)) != Map.empty and not self.get(Coord(x,y-1)) in walls: #bottom wall
-                        self._mat[y][x] = Map.horizontalwall
+                if self.get(Coord(x,y)) == Map.empty and self.surroundingElementsCoord(Coord(x,y)):
+                    self._mat[y][x] = "#"
 
-                    elif Coord(x-1,y-1) in self and self.get(Coord(x-1,y-1)) != Map.empty and not self.get(Coord(x-1,y-1)) in walls: #rigth bottom corner
-                        self._mat[y][x] = Map.corner
-                    elif Coord(x-1,y+1) in self and self.get(Coord(x-1,y+1)) != Map.empty and not self.get(Coord(x-1,y+1)) in walls: #rigth top corner
-                        self._mat[y][x] = Map.corner
-                    elif Coord(x+1,y-1) in self and self.get(Coord(x+1,y-1)) != Map.empty and not self.get(Coord(x+1,y-1)) in walls: #left bottom corner
-                        self._mat[y][x] = Map.corner
-                    elif Coord(x+1,y+1) in self and self.get(Coord(x+1,y+1)) != Map.empty and not self.get(Coord(x+1,y+1)) in walls: #left top corner
-                        self._mat[y][x] = Map.corner
+        for x in range(len(self)):
+            for y in range(len(self)):
+                if self.get(Coord(x,y)) == "#":
+                    card_point_list = self.surroundingWallsCardinal(Coord(x,y))
+                    # print(Coord(x,y),self.get(Coord(x,y)),card_point_list)
+                    if len(card_point_list) == 2:
+                        if "S" in card_point_list and "N" in card_point_list:
+                            self._mat[y][x] = "║"
+                        elif "O" in card_point_list and "E" in card_point_list:
+                            self._mat[y][x] = "═"
+                        elif "N" in card_point_list and "O" in card_point_list:
+                            self._mat[y][x] = "╝"
+                        elif "N" in card_point_list and "E" in card_point_list:
+                            self._mat[y][x] = "╚"
+                        elif "S" in card_point_list and "O" in card_point_list:
+                            self._mat[y][x] = "╗"
+                        elif "S" in card_point_list and "E" in card_point_list:
+                            self._mat[y][x] = "╔"
+                    elif len(card_point_list) == 3:
+                        if "S" in card_point_list and "N" in card_point_list and "E" in card_point_list:
+                            self._mat[y][x] = "╠"
+                        elif "S" in card_point_list and "N" in card_point_list and "O" in card_point_list:
+                            self._mat[y][x] = "╣"
+                        elif "E" in card_point_list and "O" in card_point_list and "N" in card_point_list:
+                            self._mat[y][x] = "╩"
+                        elif "E" in card_point_list and "O" in card_point_list and "S" in card_point_list:
+                            self._mat[y][x] = "╦"
+                    elif len(card_point_list)==4:
+                        self._mat[y][x] = "╬"
+                    else:
+                        self._mat[y][x] = "¤"
+                    # if self.get(Coord(x,y)) =="¤":
+                    #     print(self.get(Coord(x,y)))
 
     def move(self,e,way):
         from Creature import Creature
@@ -223,7 +262,7 @@ class Map:
         # print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        if dest in self and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
+        if dest in self and not self.get(dest) in Map.walllist:
             if self.get(dest) == Map.ground and not "frozen" in e.state:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
