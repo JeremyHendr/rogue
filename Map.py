@@ -13,7 +13,7 @@ class Map:
                 'd': Coord(1,0),
                 'q': Coord(-1,0)}
 
-    def __init__(self,size=23,hero=Hero(),nbrooms=7):
+    def __init__(self,size=22,hero=Hero(),nbrooms=7):
         self.nbrooms = nbrooms
         self.size = size
         self._hero = hero
@@ -23,12 +23,12 @@ class Map:
         self._rooms = []
         l = [Map.empty for i in range(self.size)]
         self._mat = [l.copy() for j in range(self.size)]
-       # self._mat[self.poos.y][self.poos.x] = self._hero
         self.generateRooms(nbrooms)
         self.reachAllRooms()
         self.putWalls()
         self.hidden_elem = []
         self.damage_done = []
+        self.to_delete_list = []
 
     def __repr__(self):
         rep = ""
@@ -170,7 +170,7 @@ class Map:
         if self.intersectNone(spawnroom):
             self.addRoom(spawnroom)
         for i in range(n-1):
-            choice = random.choices(["room","chest_room","waepon_dealer_room"],[10,1,1])[0]
+            choice = random.choices(["room","chest_room","waepon_dealer_room"],[15,1,1])[0]
             # print("choice",choice)
             c = self.randRoomCoord()
             if choice == "room":
@@ -225,7 +225,12 @@ class Map:
                 if self.get(Coord(x,y)) == "#":
                     card_point_list = self.surroundingWallsCardinal(Coord(x,y))
                     # print(Coord(x,y),self.get(Coord(x,y)),card_point_list)
-                    if len(card_point_list) == 2:
+                    if len(card_point_list) == 1:
+                        if "S" in card_point_list or "N" in card_point_list:
+                            self._mat[y][x] = "║"
+                        elif "E" in card_point_list or "O" in card_point_list:
+                            self._mat[y][x] = "═"
+                    elif len(card_point_list) == 2:
                         if "S" in card_point_list and "N" in card_point_list:
                             self._mat[y][x] = "║"
                         elif "O" in card_point_list and "E" in card_point_list:
@@ -270,12 +275,11 @@ class Map:
             elif self.get(dest) != Map.empty and not "frozen" in e.state:
                 if self.get(dest).meet(e) : #si l'elem a ete mis dans l'inventaire ou le monstre tue
                     if not isinstance(self.get(dest),Creature): #si c'est pas un monstre on suppr la dest puis on bouge
-                        self.rm(dest)
                         self._mat[orig.y][orig.x] = Map.ground
                         self._mat[dest.y][dest.x] = e
                         self._elem[e] = dest
-                    else: #si c'est un monstre on supprime juste la dest
-                        self.rm(dest)
+                    else: #si c'est un monstre on met dest dans une liste pou rle supprimer plustard (evite les pb ds mvallmonster)
+                        self.to_delete_list.append(dest)
                 elif isinstance(self.get(dest), Equipment):
                     # print("hidden elem append",self.get(dest),type(self.get(dest)),self.get(dest) in self._elem,self._elem)
                     self.hidden_elem.append([dest, self.get(dest)])
@@ -283,10 +287,10 @@ class Map:
                     self._mat[orig.y][orig.x] = Map.ground
                     self._mat[dest.y][dest.x] = e
                     self._elem[e] = dest
+
             elif isinstance(self.get(dest),Creature) and "frozen" in e.state:
                 if self.get(dest).meet(e):
-                    self.rm(dest)
-
+                    self.to_delete_list.append(dest)
             for elem in self.hidden_elem:
                 if self.get(elem[0]) == Map.ground:
                     self._mat[elem[0].y][elem[0].x]=elem[1]
@@ -294,6 +298,12 @@ class Map:
 
     def moveAllMonsters(self):
         from Creature import Creature
+        global rep
+
         for obj in self._elem:
-            if isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6:
+            if isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6 and self.pos(obj) not in self.to_delete_list:
                 self.move(obj, self._elem[obj].direction(self._elem[self._hero]))
+        print("todellist",self.to_delete_list)
+        for c in self.to_delete_list:
+            self.rm(c)
+            self.to_delete_list.pop(self.to_delete_list.index(c))
