@@ -8,36 +8,35 @@ import random,copy,math
 class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
-        from utiles import heal, teleport, cheat_hp, cheat_str
+        from utiles import heal, teleport, cheat_hp, cheat_str, levelUp
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
-                      1: [Weapon("stick", "|", 10)],
-                      2: [Weapon("axe", "a", 20)],
-                      3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),
-                          Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
-                      10: [Weapon("katana", "k", 60), Armor("himo", "h", 10)]}
+                        1: [Weapon("stick", "|", 10)],
+                        2: [Weapon("axe", "a", 20)],
+                        3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
+                        5: [Weapon("chainBraker","§",15,armorpene=0.5),Weapon("frostBlade","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
+                        10: [Weapon("katana", "k", 60), Armor("himo", "h", 10)]}
         self.monsters = {0: [Creature("Goblin", 40), Creature("Bat", 20, "W")],
                     1: [Creature("Ork", 60, strength=20), Creature("Blob", 100),Creature("Spyder", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 5}])],
-                    3: [Creature("Ice Golem",400,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
-                    5: [Creature("Stone Dragon", 200, "SD", strength=30),Creature("Fire Dragon", 200, "FD", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
+                    3: [Creature("Ice Golem",300,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
+                    5: [Creature("Stone Dragon", 200, "D", strength=20, armor=20), Creature("Fire Dragon", 200, "F", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
                     50: [Creature("Zeus", 1000, strength=50)]}
-        self._actions = {"z": lambda hero: self._floor.move(hero, Coord(0, -1)),
-                    "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
-                    "q": lambda hero: self._floor.move(hero, Coord(-1, 0)),
-                    "d": lambda hero: self._floor.move(hero, Coord(1, 0)),
-                    "i": lambda hero: self.addMessage(hero.fullDescription()),
-                    "k": lambda hero: hero.sethp(0),
-                    " ": lambda hero: None,
-                    "u": lambda hero: hero.use(self.select(hero._inventory)),
-                    "y": lambda hero: hero.removeInventory(self.select(hero._inventory)),
-                    "b": lambda hero: cheat_hp(hero),
-                    "n": lambda hero: cheat_str(hero),
-                    "v": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),
-                                                           self.randEquipment()),
-                    "c": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),
-                                                           self.randMonster()),
-                    "a": lambda hero: hero.healSkill(),
-                    "e": lambda hero: hero.damageSkill(),
-                    "r": lambda hero: hero.classSkill()}
+        self._actions = { "z": lambda hero: self._floor.move(hero, Coord(0, -1)),
+                        "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
+                        "q": lambda hero: self._floor.move(hero, Coord(-1, 0)),
+                        "d": lambda hero: self._floor.move(hero, Coord(1, 0)),
+                        "i": lambda hero: self.addMessage(hero.fullDescription()),
+                        "k": lambda hero: hero.sethp(0),
+                        " ": lambda hero: None,
+                        "u": lambda hero: hero.use(self.select(hero._inventory)),
+                        "y": lambda hero: hero.removeInventory(self.select(hero._inventory)),
+                        "a": lambda hero: hero.healSkill(),
+                        "e": lambda hero: hero.damageSkill(),
+                        "r": lambda hero: hero.classSkill(),
+                        "b": lambda hero: cheat_hp(hero),
+                        "n": lambda hero: cheat_str(hero),
+                        "v": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randEquipment()),
+                        "c": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randMonster()),
+                        "x": lambda hero: levelUp()}
         self.level_bonus = {3000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        6000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        9000: {"max_hp": 10, "_strength": 0, "armor": 0},
@@ -72,15 +71,16 @@ class Game():
         return rep
 
     def randElement(self,collection):
-        # rnd_exp = int(random.expovariate(1/self._level))
-        # while not rnd_exp in collection and rnd_exp>=0:
-        #     rnd_exp -= 1
-        # return random.choice(copy.deepcopy(collection[rnd_exp]))
+        rnd_exp = int(random.expovariate(1/self._level))
+        while not rnd_exp in collection and rnd_exp>=0:
+            rnd_exp -= 1
+        return random.choice(copy.deepcopy(collection[rnd_exp]))
 
-        waepon_rarety_list = [x for x in collection.keys() if x <= self._level]
-        weight_list = [1/(1+x) for x in collection.keys() if x <= self._level]
-        print(collection,waepon_rarety_list,weight_list)
-        return random.choice(copy.deepcopy(collection[random.choices(waepon_rarety_list,weight_list)[0]]))
+        # waepon_rarety_list = [x for x in collection.keys() if x <= self._level]
+        # weight_list = [1/(1+x) for x in collection.keys() if x <= self._level]
+        # print(collection,waepon_rarety_list,weight_list)
+        # return random.choice(copy.deepcopy(collection[random.choices(waepon_rarety_list,weight_list)[0]]))
+
     def randEquipment(self):
         return self.randElement(self.equipments)
 

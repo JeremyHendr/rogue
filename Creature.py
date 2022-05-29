@@ -1,7 +1,7 @@
 from Element import Element
 import math,copy
 class Creature(Element):
-    def __init__(self, name, hp, abr=False, strength=10, armor=0, damagetype=None):
+    def __init__(self, name, hp, abr=False, strength=10, armor=0, armorpene=0.0, damagetype=None):
         Element.__init__(self, name, abr)
         self.hp = hp
         self.armor = armor
@@ -9,6 +9,9 @@ class Creature(Element):
         self.xp_value = self.hp*self._strength
         self.state = {}
         self.damage_type = damagetype
+        if armorpene > 1:
+            armorpene = 1
+        self.armor_penetration = armorpene
 
     def description(self):
         s = Element.description(self)
@@ -20,7 +23,8 @@ class Creature(Element):
         print("-> In meet",self,other)
         print(other.damage_type,self.state)
         if other._strength-self.armor > 0:
-            self.hp -= other._strength-self.armor
+            print("armor",(self.armor*(1-other.armor_penetration)),self.armor,other.armor_penetration)
+            self.hp -= other._strength-(self.armor*(1-other.armor_penetration))
             theGame()._floor.damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-self.armor})
             theGame().addMessage("The "+str(other.name)+" hits the "+str(self.description()))
         if other.damage_type != None:

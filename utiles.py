@@ -25,6 +25,10 @@ def cheat_str(hero):
     print("CHEATING strength")
     hero._strength = 1000
 
+def levelUp():
+    theGame()._level
+    theGame().buildFloor()
+
 def getch():
     """Single char input, only works only on mac/linux/windows OS terminals"""
     try:

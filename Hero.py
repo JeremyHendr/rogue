@@ -12,7 +12,7 @@ class Hero(Creature):
         self.max_hp = maxhp
         self.max_invent = max_invent
         self.base_weapon = Weapon("hand","h",0)
-        self.Weapon = self.base_weapon
+        self.weapon = self.base_weapon
         self.base_protection = Armor("t-shirt","t",0)
         self.protection = self.base_protection
         self.level = 0
@@ -20,9 +20,11 @@ class Hero(Creature):
         self.max_mana = maxmana
         self.mana = 20
         self.gold = 20
+        self.armor_penetration = self.weapon.armor_penetration
+        self.damage_type = self.weapon.damage_type
 
     def playDescription(self):
-        return " ► "+self.name+" ◄  Weapon:"+self.Weapon.name+" protection:"+self.protection.name+"\n"+"  Hp:"+str(self.hp)+" Strength:"+str(self._strength)+" Armor:"+str(self.armor)+" Mana:"+str(self.mana)+"/"+str(self.max_mana)+" gold:"+str(self.gold)+"\n"+str(self._inventory)
+        return " ► "+self.name+" ◄  Weapon:"+self.weapon.name+" protection:"+self.protection.name+"\n"+"  Hp:"+str(self.hp)+" Strength:"+str(self._strength)+" Armor:"+str(self.armor)+" Mana:"+str(self.mana)+"/"+str(self.max_mana)+" gold:"+str(self.gold)+"\n"+str(self._inventory)
 
     def sethp(self,b):
         self.hp = b
@@ -33,15 +35,15 @@ class Hero(Creature):
         if not isinstance(elem,Equipment):
             raise TypeError("not an Equipement",elem)
         name_inventory = [x.name for x in self._inventory]
-        # print(elem,self._inventory,self.Weapon,self.protection)
+        # print(elem,self._inventory,self.weapon,self.protection)
         # print(name_inventory,elem.name)
-        # print("all",elem.unique or (elem.name not in name_inventory and elem.name != self.Weapon.name and elem.name != self.protection.name))
-        # print(elem.unique,elem.name not in name_inventory,elem.name != self.Weapon.name, elem.name != self.protection.name)
+        # print("all",elem.unique or (elem.name not in name_inventory and elem.name != self.weapon.name and elem.name != self.protection.name))
+        # print(elem.unique,elem.name not in name_inventory,elem.name != self.weapon.name, elem.name != self.protection.name)
         if elem.name == "gold":
             self.gold += 20
             return True
         elif len(name_inventory) < 9:
-            if elem.unique or (elem.name not in name_inventory and elem.name != self.Weapon.name and elem.name != self.protection.name):
+            if elem.unique or (elem.name not in name_inventory and elem.name != self.weapon.name and elem.name != self.protection.name):
                 self._inventory.append(elem)
                 # theGame()._floor.rm(theGame()._floor.pos(self))
                 return True
