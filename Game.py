@@ -112,7 +112,7 @@ class Game():
         self.addMessage("test")
         ml = mainloop(self._floor)
         while self._hero.hp > 0:
-            print(self._floor)
+            # print(self._floor)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -123,7 +123,7 @@ class Game():
                     print("pos = ", position_souris)
                 if event.type == pygame.KEYDOWN:
                     self.touches.pressed[event.key] = True
-
+            self.readMessages()
             ml.animation(self.readMessages(), self.touches)
             ml.realtime()
         print("--- Game Over ---")

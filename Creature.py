@@ -35,6 +35,7 @@ class Creature(Element):
             self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])
             theGame().addMessage(self.name+" is "+" ".join([x for x in self.state.keys()]))
         if self.hp <= 0:
+            self.game_state = "Death"
             if isinstance(other, Hero):
                 other.updateXp(self.xp_value)
                 other.updateMana(int(math.log(self.xp_value/100)*2))

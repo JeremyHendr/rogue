@@ -141,16 +141,15 @@ class Hero(Creature):
         if self.mana >= 10:
             self.mana -= 10
             hero_pos = theGame()._floor.pos(self)
-            for room in theGame()._floor._rooms:
-                if hero_pos in room:
-                    for monster in theGame()._floor._elem.items():
-                        # print(type(monster[0]),type(monster[1]),monster)
-                        # print(isinstance(monster[0],Creature) and not isinstance(monster[0],Hero) and monster[1] in room,isinstance(monster,Creature),not isinstance(monster,Hero),monster[1] in room)
-                        if isinstance(monster[0],Creature) and not isinstance(monster[0],Hero) and monster[1] in room:
-                            theGame().addMessage(str(monster)+"lost 10 hp")
-                            monster[0].hp -= 10
-                            # verifier si mort-
+            for monster in theGame()._floor._elem.items():
+                if isinstance(monster[0],Creature) and not isinstance(monster[0],Hero) and monster[1].distance(hero_pos)<=6:
+                    monster[0].meet(Creature("Magic",40,"~"))
 
     def classSkill(self):
+        from utiles import theGame
         if self.mana >= 20:
             self.mana -= 20
+            hero_pos = theGame()._floor.pos(self)
+            for monster in theGame()._floor._elem.items():
+                if isinstance(monster[0],Creature) and not isinstance(monster[0],Hero) and monster[1].distance(hero_pos)<=6:
+                    monster[0].meet(Creature("Magic fire",0,"~",damagetype=["burning",{"damage":10,"time":10}]))
