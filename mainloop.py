@@ -51,9 +51,10 @@ class mainloop:
         if time()-timer >= 0.7:
             self.timers[0] = time()
             self.carte.moveAllMonsters()
-        for monster in self.carte._elem:
-            if isinstance(monster, Creature):
-                monster.updateState()
+            for monster in self.carte._elem:
+                if isinstance(monster, Creature):
+                    monster.updateState()
+
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()
@@ -260,7 +261,8 @@ class mainloop:
         x,y = self.screencoords[0]/3,self.screencoords[1]/5
         im = self.pictures["manabg"]
         self.screen.blit(im,(self.screencoords[0]/3,self.screencoords[1]/5))
-
+        if self.carte._hero.mana == 0:
+            return None
         im = Image.open('Blue_bar.png')
         im = im.crop((0,0,128 - 128*((self.carte._hero.max_mana-self.carte._hero.mana)/self.carte._hero.max_mana),128))
         im.save("testmana.png")
@@ -341,6 +343,16 @@ class mainloop:
             theGame()._actions["a"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[97] = False
+
+        if 101 in pressed and pressed[101]:
+            theGame()._actions["e"](self.carte._hero)
+            # self.carte.moveAllMonsters()
+            pressed[101] = False
+
+        if 114 in pressed and pressed[114]:
+            theGame()._actions["r"](self.carte._hero)
+            # self.carte.moveAllMonsters()
+            pressed[114] = False
 
         if mainloop.inv:
             sacado = self.carte._hero._inventory

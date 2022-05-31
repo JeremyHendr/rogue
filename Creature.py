@@ -35,6 +35,7 @@ class Creature(Element):
             self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])
             theGame().addMessage(self.name+" is "+" ".join([x for x in self.state.keys()]))
         if self.hp <= 0:
+            self.game_state = "Death"
             if isinstance(other, Hero):
                 other.updateXp(self.xp_value)
                 other.updateMana(int(math.log(self.xp_value/100)*2))
@@ -46,14 +47,16 @@ class Creature(Element):
         for dic in self.state.items():
             # print("state loop",state,state[0])
             if dic[0] == "poisoned":
-                self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor))
+                if self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor)):
+                    self.game_state = "Death"
                 self.state[dic[0]]["damage"] += self.state[dic[0]]["damage"]
                 if self.state[dic[0]]["time"] > 0:
                     self.state[dic[0]]["time"] -= 1
                 else:
                     statetodelete.append(dic[0])
             elif dic[0] == "burning":
-                self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor))
+                if self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor)):
+                    self.game_state = "Death"
             elif dic[0] == "frozen":
                 if self.state[dic[0]]["time"] > 0:
                     self.state[dic[0]]["time"] -= 1
