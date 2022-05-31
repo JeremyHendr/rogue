@@ -4,11 +4,14 @@ from Armor import Armor
 from Creature import Creature
 from Coord import Coord
 from Hero import Hero
+from Classes import *
 import random,copy,math
+from touches import touches
+from mainloop import mainloop
 class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
-        from utiles import heal, teleport, cheat_hp, cheat_str, levelUp
+        from utiles import heal, teleport, cheat_hp, cheat_str
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
                         1: [Weapon("stick", "|", 10)],
                         2: [Weapon("axe", "a", 20)],
@@ -35,8 +38,7 @@ class Game():
                         "b": lambda hero: cheat_hp(hero),
                         "n": lambda hero: cheat_str(hero),
                         "v": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randEquipment()),
-                        "c": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randMonster()),
-                        "x": lambda hero: levelUp()}
+                        "c": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randMonster()),}
         self.level_bonus = {3000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        6000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        9000: {"max_hp": 10, "_strength": 0, "armor": 0},
@@ -59,6 +61,7 @@ class Game():
         self._floor.put(self._floor._rooms[-1].center(), Stairs())
         for room in self._floor._rooms:
             room.decorate(self._floor)
+        mainloop.carte = self._floor
 
     def addMessage(self,msg):
         self._message.append(msg)
@@ -102,24 +105,25 @@ class Game():
         return None
 
     def play(self):
-        from utiles import getch
         """Main game loop"""
         self.buildFloor()
         print("--- Welcome Hero! ---")
+        self.touches = touches()
+        self.addMessage("test")
+        ml = mainloop(self._floor)
         while self._hero.hp > 0:
-            print()
             print(self._floor)
-            print(self._hero.playDescription())
-            print(self.readMessages())
-            c = getch()
-            # print("entree getch",c)
-            if c in self._actions:
-                if c == "y":
-                    print("Be careful if you REMOVE an item from your inventory you CANT get it back")
-                self._actions[c](self._hero)
-                self._floor.moveAllMonsters()
-            for monster in self._floor._elem:
-                if isinstance(monster,Creature):
-                    monster.updateState()
-        print(self._hero.playDescription())
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    self._hero.sethp(0)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    position_souris = event.pos
+                    self.touches.pressed["click"] = position_souris
+                    print("pos = ", position_souris)
+                if event.type == pygame.KEYDOWN:
+                    self.touches.pressed[event.key] = True
+
+            ml.animation(self.readMessages(), self.touches)
+            ml.realtime()
         print("--- Game Over ---")

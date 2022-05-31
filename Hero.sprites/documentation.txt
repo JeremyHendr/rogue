@@ -1,0 +1,6 @@
+documentation:
+0 - Idle
+1 - Spell
+2 - Walking
+3- Attack
+4- Death

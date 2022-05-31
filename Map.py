@@ -1,5 +1,6 @@
 from Coord import Coord
 from Hero import Hero
+from Creature import Creature
 import random
 
 class Map:
@@ -260,25 +261,31 @@ class Map:
                     # if self.get(Coord(x,y)) =="¤":
                     #     print(self.get(Coord(x,y)))
 
-    def move(self,e,way):
-
+    def move(self, e, way):
         """Moves the element e in the direction way."""
-        print("-> In move with",e,way,e.state)
+        from Equipment import Equipment
+        from Creature import Creature
+        
+        # print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        if dest in self and not "frozen" in e.state and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
-            if self.get(dest) == Map.ground:
+        e.game_state = "Walking"
+        if dest in self and not self.get(dest) in Map.walllist:
+            if self.get(dest) == Map.ground and not "frozen" in e.state:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
                 self._elem[e] = dest
             elif self.get(dest) != Map.empty and not "frozen" in e.state:
-                if self.get(dest).meet(e) : #si l'elem a ete mis dans l'inventaire ou le monstre tue
-                    if not isinstance(self.get(dest),Creature): #si c'est pas un monstre on suppr la dest puis on bouge
+                # si l'elem a ete mis dans l'inventaire ou le monstre tue
+                if self.get(dest).meet(e):
+                    # si c'est pas un monstre on suppr la dest puis on bouge
+                    if not isinstance(self.get(dest), Creature):
+                        self.rm(dest)
                         self._mat[orig.y][orig.x] = Map.ground
                         self._mat[dest.y][dest.x] = e
                         self._elem[e] = dest
-                    else: #si c'est un monstre on supprime juste la dest
-                        self.rm(dest)
+                    # else:  # si c'est un monstre on supprime juste la dest
+                    #     self.rm(dest)
                 elif isinstance(self.get(dest), Equipment):
                     # print("hidden elem append",self.get(dest),type(self.get(dest)),self.get(dest) in self._elem,self._elem)
                     self.hidden_elem.append([dest, self.get(dest)])
@@ -286,13 +293,13 @@ class Map:
                     self._mat[orig.y][orig.x] = Map.ground
                     self._mat[dest.y][dest.x] = e
                     self._elem[e] = dest
-
-            elif isinstance(self.get(dest),Creature) and "frozen" in e.state:
+            elif isinstance(self.get(dest), Creature) and "frozen" in e.state:
                 if self.get(dest).meet(e):
-                    self.to_delete_list.append(dest)
+                    self.rm(dest)
+
             for elem in self.hidden_elem:
                 if self.get(elem[0]) == Map.ground:
-                    self._mat[elem[0].y][elem[0].x]=elem[1]
+                    self._mat[elem[0].y][elem[0].x] = elem[1]
                     self.hidden_elem.pop(self.hidden_elem.index(elem))
 
     def moveAllMonsters(self):
@@ -306,3 +313,26 @@ class Map:
         for c in self.to_delete_list:
             self.rm(c)
             self.to_delete_list.pop(self.to_delete_list.index(c))
+            
+    def fogOfWar(self):
+        from Coord import Coord
+        x, y = self.pos(self._hero).x, self.pos(self._hero).y
+        coingauche = Coord(x-self.fov, y+self.fov)
+        coindroit = Coord(x+self.fov, y - self.fov)
+        a, b = -1, -1
+        # print(coingauche,coindroit,x,y)
+        c = []
+        for i in self._mat:
+            b += 1
+            d = []
+            for k in i:
+                a += 1
+             #   print("a = ",a,"b = ",b, d)
+                if a >= coingauche.x and a <= coindroit.x and b >= coindroit.y and b <= coingauche.y:
+                    d.append(k)
+                    #print("a = ",a,b,d)
+                    # sleep(2)
+            a = 0
+            if len(d) > 0:
+                c.append(d)
+        return c

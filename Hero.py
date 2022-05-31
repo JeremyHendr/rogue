@@ -16,7 +16,8 @@ class Hero(Creature):
         self.base_protection = Armor("t-shirt","t",0)
         self.protection = self.base_protection
         self.level = 0
-        self.xp = 0
+        self.xp = 1
+        self.game_state = "Idle"
         self.max_mana = maxmana
         self.mana = 20
         self.gold = 20

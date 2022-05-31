@@ -9,6 +9,7 @@ class Creature(Element):
         self.xp_value = self.hp*self._strength
         self.state = {}
         self.damage_type = damagetype
+        self.game_state = "Idle"
         if armorpene > 1:
             armorpene = 1
         self.armor_penetration = armorpene
@@ -20,6 +21,9 @@ class Creature(Element):
     def meet(self,other):
         from utiles import theGame
         from Hero import Hero
+        if isinstance(other,Hero):
+            if other.game_state == "Walking":
+               return False
         print("-> In meet",self,other)
         print(other.damage_type,self.state)
         if other._strength-self.armor > 0:

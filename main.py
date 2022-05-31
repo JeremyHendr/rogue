@@ -1,2 +1,12 @@
 from utiles import theGame
+import random
+import copy
+import math
+import pygame
+from time import *
+from Classes import *
+from PIL import Image
+# random.seed(69)
+pygame.init()
+
 theGame().play()
