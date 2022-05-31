@@ -28,6 +28,7 @@ class Map:
         self.putWalls()
         self.hidden_elem = []
         self.damage_done = []
+        self.fov = 4
         self.to_delete_list = []
 
     def __repr__(self):
@@ -260,15 +261,13 @@ class Map:
                     #     print(self.get(Coord(x,y)))
 
     def move(self,e,way):
-        from Creature import Creature
-        from Equipment import Equipment
-        from utiles import theGame
+
         """Moves the element e in the direction way."""
-        # print("-> In move with",e,way,e.state)
+        print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        if dest in self and not self.get(dest) in Map.walllist:
-            if self.get(dest) == Map.ground and not "frozen" in e.state:
+        if dest in self and not "frozen" in e.state and not self.get(dest) == Map.horizontalwall and not self.get(dest) == Map.verticalwall:
+            if self.get(dest) == Map.ground:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
                 self._elem[e] = dest
@@ -278,8 +277,8 @@ class Map:
                         self._mat[orig.y][orig.x] = Map.ground
                         self._mat[dest.y][dest.x] = e
                         self._elem[e] = dest
-                    else: #si c'est un monstre on met dest dans une liste pou rle supprimer plustard (evite les pb ds mvallmonster)
-                        self.to_delete_list.append(dest)
+                    else: #si c'est un monstre on supprime juste la dest
+                        self.rm(dest)
                 elif isinstance(self.get(dest), Equipment):
                     # print("hidden elem append",self.get(dest),type(self.get(dest)),self.get(dest) in self._elem,self._elem)
                     self.hidden_elem.append([dest, self.get(dest)])
