@@ -51,9 +51,10 @@ class mainloop:
         if time()-timer >= 0.7:
             self.timers[0] = time()
             self.carte.moveAllMonsters()
-        for monster in self.carte._elem:
-            if isinstance(monster, Creature):
-                monster.updateState()
+            for monster in self.carte._elem:
+                if isinstance(monster, Creature):
+                    monster.updateState()
+
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()

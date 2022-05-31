@@ -46,14 +46,16 @@ class Creature(Element):
         for dic in self.state.items():
             # print("state loop",state,state[0])
             if dic[0] == "poisoned":
-                self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor))
+                if self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor)):
+                    self.game_state = "Death"
                 self.state[dic[0]]["damage"] += self.state[dic[0]]["damage"]
                 if self.state[dic[0]]["time"] > 0:
                     self.state[dic[0]]["time"] -= 1
                 else:
                     statetodelete.append(dic[0])
             elif dic[0] == "burning":
-                self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor))
+                if self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor)):
+                    self.game_state = "Death"
             elif dic[0] == "frozen":
                 if self.state[dic[0]]["time"] > 0:
                     self.state[dic[0]]["time"] -= 1
