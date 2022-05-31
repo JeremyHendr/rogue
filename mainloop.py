@@ -78,9 +78,10 @@ class mainloop:
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
         cursor_rect = cursorsp.get_rect()
-        a,b = pygame.mouse.get_pos()[0]-32,pygame.mouse.get_pos()[1]
+        a,b = pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]
         cursor_rect.center = (a,b)
         self.screen.blit(cursorsp,cursor_rect)
+        pygame.display.update()
 
     def background(self):
         # self.screen.set_colorkey([128,0,128]) # don't copy color [0,0,0] on screen
@@ -147,6 +148,18 @@ class mainloop:
                 print("killed?")
                 self.carte._elem[i] = ""
                 self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Ork":
+            img, act = self.anim_lib.anim_orc(
+                i.game_state)[0], self.anim_lib.anim_orc(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
         elif isinstance(i, Chest):
             img = self.pictures["chest"]
             img = pygame.transform.scale(img, (64, 64))
@@ -176,6 +189,52 @@ class mainloop:
             y+=imgsize
         self.weapon_ui(basex,y)
         
+    def chestselect(self,l):
+        self.background()
+        while True:
+            print(l)
+            x, y = self.screencoords[0]/2, self.screencoords[1]/2
+            basex = x
+            a = -1
+            imgsize = 64
+            hitbox = []
+            img1 = self.pictures["chestpresentation1"]
+            img1 = pygame.transform.scale(img1, (420, 600))
+            self.screen.blit(img1,(x,y))
+            for i in range(2):
+                for k in range(3):
+                    a+=1
+                    if len(l)>a:
+                        hitbox.append(Coord(x,y))
+                        img = self.pictures[l[a].name]
+                        img = pygame.transform.scale(img, (64, 64))
+                        self.screen.blit(img, (x, y))
+                    x+=imgsize
+                x = basex
+                y+=imgsize
+            self.ui()
+            print(hitbox)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    self._hero.sethp(0)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    position_souris = event.pos
+                    a = 0
+                    for i in hitbox:
+                        if position_souris[0]>=i.x and position_souris[0]<i.x+imgsize and position_souris[1]>=i.y and position_souris[1]<i.y+imgsize:
+                            return l[a]
+                        else:
+                            a+=1
+                    
+            
+            
+        
+        
+    
+    
+    
     def weapon_ui(self,x,y):
         im2 = self.pictures["invweapon"]
         im2 = pygame.transform.scale(im2, (64, 64))

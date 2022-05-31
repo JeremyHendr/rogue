@@ -18,10 +18,14 @@ class Game():
                         3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
                         5: [Weapon("chainBraker","§",15,armorpene=0.5),Weapon("frostBlade","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
                         10: [Weapon("katana", "k", 60), Armor("himo", "h", 10)]}
-        self.monsters = {0: [Creature("Goblin", 40), Creature("Bat", 20, "W")],
-                    1: [Creature("Ork", 60, strength=20), Creature("Blob", 100),Creature("Spyder", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 5}])],
+        self.monsters = {0: [Creature("Goblin", 40), 
+                             Creature("Bat", 20, "W")],
+                    1: [Creature("Ork", 60, strength=20),
+                        Creature("Blob", 100),
+                        Creature("Spyder", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 5}])],
                     3: [Creature("Ice Golem",300,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
-                    5: [Creature("Stone Dragon", 200, "D", strength=20, armor=20), Creature("Fire Dragon", 200, "F", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
+                    5: [Creature("Stone Dragon", 200, "D", strength=20, armor=20),
+                        Creature("Fire Dragon", 200, "F", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
                     50: [Creature("Zeus", 1000, strength=50)]}
         self._actions = { "z": lambda hero: self._floor.move(hero, Coord(0, -1)),
                         "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
@@ -51,6 +55,7 @@ class Game():
         self._level = level
         self._floor = floor
         self._message = []
+        self.ml  = ""
 
     def buildFloor(self):
         from Map import Map
@@ -91,18 +96,7 @@ class Game():
         return self.randElement(self.monsters)
 
     def select(self,l):
-        from utiles import getch
-        p=[]
-        for i in range(len(l)):
-            # if l[i].usage != None or isinstance(l[i],Weapon) or isinstance(l[i],Armor):
-            # if isinstance(l[i], Weapon) or isinstance(l[i], Armor):
-            p.append(str(i)+": "+l[i].name)
-        print("Choose item>", p)
-        a = getch()
-        if a.isdigit() and int(a)<len(l):
-            #print(l[int(a)],type(l[int(a)]))
-            return l[int(a)]
-        return None
+        return self.ml.chestselect(l)
 
     def play(self):
         """Main game loop"""
@@ -110,9 +104,8 @@ class Game():
         print("--- Welcome Hero! ---")
         self.touches = touches()
         self.addMessage("test")
-        ml = mainloop(self._floor)
+        self.ml = mainloop(self._floor)
         while self._hero.hp > 0:
-            print(self._floor)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -124,6 +117,6 @@ class Game():
                 if event.type == pygame.KEYDOWN:
                     self.touches.pressed[event.key] = True
 
-            ml.animation(self.readMessages(), self.touches)
-            ml.realtime()
+            self.ml.animation(self.readMessages(), self.touches)
+            self.ml.realtime()
         print("--- Game Over ---")

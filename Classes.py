@@ -19,6 +19,12 @@ class anim_total:
         self.goblin_anim_nb2_3 = 10
         self.goblin_anim_time = time()
         
+        self.orc_last_state = "Idle"
+        self.orc_action = "Live"
+        self.orc_anim_nb1 = 20
+        self.orc_anim_nb2_3_4 = 10
+        self.orc_anim_time = time()
+        
     def anim_hero(self,state):
         imgact = int((time()-self.hero_anim_time)*10)
         if self.hero_anim_val != state:
@@ -72,6 +78,28 @@ class anim_total:
             self.goblin_action = "Live"
             imgact = 0
         return pygame.image.load("Goblin.sprites/"+str(state)+"/"+str(imgact)+".png"),self.goblin_action
+    
+    def anim_orc(self,state):
+        imgact = int((time()-self.orc_anim_time)*10)
+        if state != self.orc_last_state:
+            self.orc_last_state = state
+            self.orc_action = "Live"
+            self.orc_anim_time = time()
+            imgact = 0
+            
+        elif state == "Death"  and (imgact >= (self.orc_anim_nb2_3_4-1)):
+            self.orc_anim_time = time()
+            self.orc_action = "Kill"
+            imgact = 0
+        elif state !="Death" and state !="Idle" and (imgact >= (self.orc_anim_nb2_3_4-1)):
+            self.orc_anim_time = time()
+            imgact = 0
+            
+        elif (state == "Idle" or state=="Walking")  and imgact>=self.orc_anim_nb1-1:
+            self.orc_anim_time = time()
+            self.orc_action = "Live"
+            imgact = 0
+        return pygame.image.load("Orc.sprites/"+str(state)+"/"+str(imgact)+".png"),self.orc_action
         
         
         
