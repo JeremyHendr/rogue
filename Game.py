@@ -76,7 +76,8 @@ class Game():
         for m in self._message:
             rep+=m+". "
         self._message = []
-        return rep
+        if rep != "":
+            print(rep)
 
     def randElement(self,collection):
         rnd_exp = int(random.expovariate(1/self._level))
@@ -105,6 +106,7 @@ class Game():
         self.touches = touches()
         self.addMessage("test")
         self.ml = mainloop(self._floor)
+        a = True
         while self._hero.hp > 0:
             # print(self._floor)
             self.ml.animation(self.touches)
@@ -120,4 +122,7 @@ class Game():
                 if event.type == pygame.KEYDOWN:
                     self.touches.pressed[event.key] = True
             self.readMessages()
+            if a:
+                print("templ",self.ml.templist)
+                a = False
         print("--- Game Over ---")

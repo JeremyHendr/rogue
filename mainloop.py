@@ -107,13 +107,14 @@ class mainloop:
                         img = self.pictures["sol"]
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
-                self.templist.append(([b,a],[x,y]))
+                self.templist.append((Coord(b,a),Coord(x,y)))
                 x += imgsize
             b=-1
             finishingx = x
             x = basex
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
+
     def checking(self, i, x, y):
         from Chest import Chest
         img = self.pictures["sol"]
@@ -228,14 +229,7 @@ class mainloop:
                             return l[a]
                         else:
                             a+=1
-                    
-            
-            
-        
-        
-    
-    
-    
+
     def weapon_ui(self,x,y):
         im2 = self.pictures["invweapon"]
         im2 = pygame.transform.scale(im2, (64, 64))

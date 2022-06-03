@@ -309,7 +309,7 @@ class Map:
         for obj in self._elem:
             if isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6 and self.pos(obj) not in self.to_delete_list:
                 self.move(obj, self._elem[obj].direction(self._elem[self._hero]))
-        print("todellist",self.to_delete_list)
+        # print("todellist",self.to_delete_list)
         for c in self.to_delete_list:
             self.rm(c)
             self.to_delete_list.pop(self.to_delete_list.index(c))
