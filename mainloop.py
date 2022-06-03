@@ -29,8 +29,9 @@ class mainloop:
         self.anim_mat = {}
         self.startingaxis = None
         self.finishingaxis = None
+        self.templist = []
 
-    def animation(self, ms, tc):  # la boucle principale qui reprint tout
+    def animation(self,tc):  # la boucle principale qui reprint tout
         pygame.display.init()
         self.screen = pygame.display.set_mode(self.screencoords)
         #self.screen.blit(self.bg1test, (0, 0))
@@ -70,11 +71,7 @@ class mainloop:
                     del self.carte._elem[self.carte.get(pos)]
 
     def foreground(self):
-        for i in self.anim_mat:
-            if len(self.anim_mat[i]) != 1:
-                self.checking(
-                    self.anim_mat[i][1], self.anim_mat[i][0], self.anim_mat[i][1])
-                
+        pass
     def ui(self):
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
@@ -91,8 +88,11 @@ class mainloop:
         x, y = basex, self.screencoords[1]/4
         self.startingaxis = Coord(x,y)
         finishingx = 0
+        b,a = -1,-1
         for k in self.carte.fogOfWar():
+            a+=1
             for i in k:
+                b+=1
                 if i == Map.empty:
                     pass
                 elif type(i) != str:
@@ -107,12 +107,13 @@ class mainloop:
                         img = self.pictures["sol"]
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
+                self.templist.append(([b,a],[x,y]))
                 x += imgsize
+            b=-1
             finishingx = x
             x = basex
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
-
     def checking(self, i, x, y):
         from Chest import Chest
         img = self.pictures["sol"]
@@ -193,7 +194,6 @@ class mainloop:
     def chestselect(self,l):
         self.background()
         while True:
-            print(l)
             x, y = self.screencoords[0]/2, self.screencoords[1]/2
             basex = x
             a = -1
@@ -214,7 +214,7 @@ class mainloop:
                 x = basex
                 y+=imgsize
             self.ui()
-            print(hitbox)
+        
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

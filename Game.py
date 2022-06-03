@@ -107,6 +107,7 @@ class Game():
         self.ml = mainloop(self._floor)
         while self._hero.hp > 0:
             # print(self._floor)
+            self.ml.animation(self.touches)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
