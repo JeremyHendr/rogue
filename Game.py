@@ -56,6 +56,7 @@ class Game():
         self._floor = floor
         self._message = []
         self.ml  = ""
+        self.convert_coord_list = []
 
     def buildFloor(self):
         from Map import Map

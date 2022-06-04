@@ -82,6 +82,7 @@ class mainloop:
         pygame.display.update()
 
     def background(self):
+        from utiles import theGame
         # self.screen.set_colorkey([128,0,128]) # don't copy color [0,0,0] on screen
         imgsize = 64
         basex = self.screencoords[0]/2 - 288
@@ -107,7 +108,7 @@ class mainloop:
                         img = self.pictures["sol"]
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
-                self.templist.append((Coord(b,a),Coord(x,y)))
+                theGame().convert_coord_list.append((Coord(b,a),Coord(x,y)))
                 x += imgsize
             b=-1
             finishingx = x
