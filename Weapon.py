@@ -2,14 +2,14 @@ from Equipment import Equipment
 from Bullet import Bullet
 
 class Weapon(Equipment):
-    def __init__(self,name,abr=False,incr=0,armorpene=0,damagetype=None,range=False,blspeed=0,):
+    def __init__(self,name,abr=False,incr=0,armorpene=0,damagetype=None,isrange=False,bullet=None):
         Equipment.__init__(self,name,abr,False)
         self.strength = incr
         self.armor_penetration = armorpene
         self.damage_type = damagetype
-        self.range = range
-        if range:
-            self.bulletspeed = blspeed
+        self.isrange = False
+        if isrange:
+            self.bullet = bullet
 
 
     def equip(self, creature):

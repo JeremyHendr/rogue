@@ -48,6 +48,8 @@ class mainloop:
         pygame.display.update()
 
     def realtime(self):
+        from utiles import theGame
+        from Bullet import Bullet
         timer = self.timers[0]
         if time()-timer >= 0.7:
             self.timers[0] = time()
@@ -59,16 +61,23 @@ class mainloop:
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()
-            direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
-            if not direc:
-                direc = -1
-            pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
-            if isinstance(self.carte.get(pos), Creature):
-                self.carte.get(pos).meet(self.carte._hero)
-                if self.carte.get(pos).hp <= 0:
-                    self.carte.get(pos).game_state = "Death"
-                   # self.anim_mat[(pos.x,pos.y)] = [self.anim_mat[(pos.x,pos.y)],self.carte.get(pos)]
-                    del self.carte._elem[self.carte.get(pos)]
+            if self.carte._hero.weapon.isrange:
+                bl = theGame()._hero.weapon.bullet
+                hpos = theGame()._floor.pos(theGame()._hero)
+                dest = pygame.mouse.get_pos()[0]
+                print("adding bullet to list",hpos,dest,bl.speed,bl.dammage,bl.armor_pene,bl.damage_type)
+                theGame().bullet_list.append(Bullet(hpos,theGame()._herodest,bl.speed,bl.dammage,bl.armor_pene,bl.damage_type))
+            else:
+                direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
+                if not direc:
+                    direc = -1
+                pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
+                if isinstance(self.carte.get(pos), Creature):
+                    self.carte.get(pos).meet(self.carte._hero)
+                    if self.carte.get(pos).hp <= 0:
+                        self.carte.get(pos).game_state = "Death"
+                       # self.anim_mat[(pos.x,pos.y)] = [self.anim_mat[(pos.x,pos.y)],self.carte.get(pos)]
+                        del self.carte._elem[self.carte.get(pos)]
 
     def foreground(self):
         pass
@@ -90,6 +99,7 @@ class mainloop:
         self.startingaxis = Coord(x,y)
         finishingx = 0
         b,a = -1,-1
+        print("fogofwar",self.carte.fogOfWar())
         for k in self.carte.fogOfWar():
             a+=1
             for i in k:
@@ -99,7 +109,6 @@ class mainloop:
                 elif type(i) != str:
                     self.checking(i, x, y)
                 else:
-                        
                     if i in Map.walllist:
                         img = self.pictures[i]
                         img = pygame.transform.scale(img, (64, 64))

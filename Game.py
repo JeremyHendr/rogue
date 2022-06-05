@@ -12,8 +12,9 @@ class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
         from utiles import heal, teleport, cheat_hp, cheat_str
+        from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
-                        1: [Weapon("stick", "|", 10)],
+                        1: [Weapon("stick", "|", 10),Weapon("gun","g",isrange=True,bullet=Bullet())],
                         2: [Weapon("axe", "a", 20)],
                         3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
                         5: [Weapon("chainBraker","§",15,armorpene=0.5),Weapon("frostBlade","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
@@ -57,6 +58,7 @@ class Game():
         self._message = []
         self.ml  = ""
         self.convert_coord_list = []
+        self.bullet_list = []
 
     def buildFloor(self):
         from Map import Map
