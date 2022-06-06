@@ -7,7 +7,7 @@ class Weapon(Equipment):
         self.strength = incr
         self.armor_penetration = armorpene
         self.damage_type = damagetype
-        self.isrange = False
+        self.isrange = isrange
         if isrange:
             self.bullet = bullet
 

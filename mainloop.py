@@ -37,7 +37,7 @@ class mainloop:
         #self.screen.blit(self.bg1test, (0, 0))
         # self.chat(ms)
         self.background()
-        # self.foreground()
+        self.foreground()
         self.action(tc.pressed)
         if self.inv:
             self.inventory_ui()
@@ -61,12 +61,14 @@ class mainloop:
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()
+            print(self.carte._hero.weapon,self.carte._hero.weapon.isrange)
             if self.carte._hero.weapon.isrange:
+                print("in attack hero with range")
                 bl = theGame()._hero.weapon.bullet
                 hpos = theGame()._floor.pos(theGame()._hero)
-                dest = pygame.mouse.get_pos()[0]
-                print("adding bullet to list",hpos,dest,bl.speed,bl.dammage,bl.armor_pene,bl.damage_type)
-                theGame().bullet_list.append(Bullet(hpos,theGame()._herodest,bl.speed,bl.dammage,bl.armor_pene,bl.damage_type))
+                dest = Coord(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]).toSpecialCoord()
+                print("adding bullet to list",hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type)
+                theGame().bullet_list.append(Bullet(hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type))
             else:
                 direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
                 if not direc:
@@ -80,7 +82,21 @@ class mainloop:
                         del self.carte._elem[self.carte.get(pos)]
 
     def foreground(self):
-        pass
+        from utiles import theGame
+        # print(theGame().convert_coord_list)
+        for bullet in theGame().bullet_list:
+            bullet.updatePos()
+            print(bullet)
+            print(theGame().convert_coord_list.index(Coord(bullet.pos.x,bullet.pos.y)))
+            for couple in theGame().convert_coord_list:
+                if couple[0] == Coord(bullet.pos.x,bullet.pos.y):
+                    c = SpecialCoord(couple[1].x,couple[1].y,bullet.pos.decx,bullet.pos.decy)
+                    x = c.x+c.decx
+                    y = c.y+c.decy
+                    print("couple",couple[1],c,x,y)
+
+            self.screen.blit(self.pictures["heal potion"], (x, y))
+
     def ui(self):
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
@@ -99,7 +115,7 @@ class mainloop:
         self.startingaxis = Coord(x,y)
         finishingx = 0
         b,a = -1,-1
-        print("fogofwar",self.carte.fogOfWar())
+        theGame().convert_coord_list = []
         for k in self.carte.fogOfWar():
             a+=1
             for i in k:
@@ -130,7 +146,7 @@ class mainloop:
         img = self.pictures["sol"]
         img = pygame.transform.scale(img, (64, 64))
         self.screen.blit(img, (x, y))
-
+        # print("pct",self.pictures)
         if i.name in self.pictures and i.name != "Hero":
             self.screen.blit(self.pictures[i.name], (x, y))
         elif i.name == "Hero":

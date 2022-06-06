@@ -9,8 +9,9 @@ class SpecialCoord():
         self.decy = decy
 
     def __eq__(self,other):
-        if self.x==other.x and self.y==other.y and self.decx==other.decx and self.decy==other.decy:
-            return True
+        if isinstance(other,SpecialCoord):
+            if self.x==other.x and self.y==other.y and self.decx==other.decx and self.decy==other.decy:
+                return True
         return False
 
     def __add__(self,other):
@@ -44,7 +45,7 @@ class SpecialCoord():
         return SpecialCoord(repx, repy, repdecx, repdecy)
 
     def __repr__(self):
-        return "<"+str(self.x)+"."+str(self.decx)+" , "+str(self.y)+"."+str(self.decy)+">"
+        return "<"+str(int(self.x))+"."+str(int(self.decx))+" , "+str(int(self.y))+"."+str(int(self.decy))+">"
 
     def distance(self,other):
         """

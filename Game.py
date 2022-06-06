@@ -14,7 +14,7 @@ class Game():
         from utiles import heal, teleport, cheat_hp, cheat_str
         from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
-                        1: [Weapon("stick", "|", 10),Weapon("gun","g",isrange=True,bullet=Bullet())],
+                        1: [Weapon("gun", "|", 10),Weapon("stick","g",isrange=True,bullet=Bullet())],
                         2: [Weapon("axe", "a", 20)],
                         3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
                         5: [Weapon("chainBraker","§",15,armorpene=0.5),Weapon("frostBlade","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
@@ -64,14 +64,17 @@ class Game():
         from Map import Map
         from Stairs import Stairs
         print("Xp at new lvl buil",self._hero.xp,"lvl:",self._level)
+
         self._floor = Map(hero=self._hero)
         self._floor.put(self._floor._rooms[0].center(), self._floor._hero)
         self._floor.put(self._floor._rooms[-1].center(), Stairs())
         for room in self._floor._rooms:
             room.decorate(self._floor)
         mainloop.carte = self._floor
-
+        print(self._floor._elem)
+        print(self._floor)
     def addMessage(self,msg):
+        # print("added",msg)
         self._message.append(msg)
 
     def readMessages(self):
@@ -124,6 +127,7 @@ class Game():
                     print("pos = ", position_souris)
                 if event.type == pygame.KEYDOWN:
                     self.touches.pressed[event.key] = True
+            # print(self._message)
             self.readMessages()
             if a:
                 print("templ",self.ml.templist)
