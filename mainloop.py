@@ -30,9 +30,11 @@ class mainloop:
         self.startingaxis = None
         self.finishingaxis = None
         self.templist = []
+        self.touches = ""
 
-    def animation(self,tc):  # la boucle principale qui reprint tout
+    def animation(self):  # la boucle principale qui reprint tout
         pygame.display.init()
+        tc = self.touches
         self.screen = pygame.display.set_mode(self.screencoords)
         #self.screen.blit(self.bg1test, (0, 0))
         # self.chat(ms)
@@ -46,7 +48,18 @@ class mainloop:
         self.exp_bar()
         self.ui()
         pygame.display.update()
-
+        
+    def deathanimation(self):
+        t = time()
+        while time()-t<=1:
+            pygame.display.init()
+            self.screen = pygame.display.set_mode(self.screencoords)
+            self.background()
+            self.health_bar()
+            self.mana_bar()
+            self.exp_bar()
+            self.ui()
+        
     def realtime(self):
         timer = self.timers[0]
         if time()-timer >= 0.7:
@@ -72,6 +85,7 @@ class mainloop:
 
     def foreground(self):
         pass
+    
     def ui(self):
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
@@ -114,6 +128,7 @@ class mainloop:
             x = basex
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
+        
     def checking(self, i, x, y):
         from Chest import Chest
         img = self.pictures["sol"]
@@ -123,11 +138,12 @@ class mainloop:
         if i.name in self.pictures and i.name != "Hero":
             self.screen.blit(self.pictures[i.name], (x, y))
         elif i.name == "Hero":
-            direc = (pygame.mouse.get_pos()[0] < self.screencoords[0]/2)
-            im = self.anim_lib.anim_hero(i.game_state)
+            im = self.anim_lib.anim_hero(i.game_state,i.walkingcoord)
             img, i.game_state = im[0], im[1]
             img = pygame.transform.scale(img, (64, 64))
-            img = pygame.transform.flip(img, direc, 0)
+            if i.game_state != "Walking":
+                direc = (pygame.mouse.get_pos()[0] < self.screencoords[0]/2)
+                img = pygame.transform.flip(img, direc, 0)
             self.screen.blit(img, (x, y))
 
         elif i.name == "Bat":
@@ -162,6 +178,39 @@ class mainloop:
                 self.carte._elem[i] = ""
                 self.carte.rm(self.carte.pos(i))
                 
+        elif i.name == "Snake":
+            img, act = self.anim_lib.anim_snake(
+                i.game_state)[0], self.anim_lib.anim_snake(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Blob":
+            img, act = self.anim_lib.anim_Blob(
+                i.game_state)[0], self.anim_lib.anim_Blob(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Stone Minotaur":
+            img, act = self.anim_lib.anim_Stone_Minotaur(
+                i.game_state)[0], self.anim_lib.anim_Stone_Minotaur(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
         elif isinstance(i, Chest):
             img = self.pictures["chest"]
             img = pygame.transform.scale(img, (64, 64))
@@ -169,6 +218,14 @@ class mainloop:
 
         else:
             self.screen.blit(self.pictures["imgnotdefined"], (x, y))
+        if isinstance(i,Creature) or isinstance(i,Hero):
+            for st in i.state:
+                print(st)
+                if st == "poisoned":
+                    im = self.anim_lib.anim_state()
+                    im = pygame.transform.scale(im, (64, 64))
+                    self.screen.blit(im,(x,y))
+                    
 
     def inventory_ui(self):
         x, y = self.screencoords[0]/2, self.screencoords[1]/8
@@ -193,15 +250,20 @@ class mainloop:
         
     def chestselect(self,l):
         self.background()
+        font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
-            x, y = self.screencoords[0]/2, self.screencoords[1]/2
-            basex = x
+            x, y = self.screencoords[0]/2-210, self.screencoords[1]/2-300
             a = -1
             imgsize = 64
             hitbox = []
             img1 = self.pictures["chestpresentation1"]
             img1 = pygame.transform.scale(img1, (420, 600))
             self.screen.blit(img1,(x,y))
+            x, y = self.screencoords[0]/2-64, self.screencoords[1]/2
+            text=font.render("Un coffre! Il contient: ",1,[255,255,255])
+            self.screen.blit(text,  (x-80,y-200))
+            basex = x
+            
             for i in range(2):
                 for k in range(3):
                     a+=1
@@ -228,13 +290,6 @@ class mainloop:
                             return l[a]
                         else:
                             a+=1
-                    
-            
-            
-        
-        
-    
-    
     
     def weapon_ui(self,x,y):
         im2 = self.pictures["invweapon"]
@@ -302,26 +357,38 @@ class mainloop:
         if 27 in pressed:
             pygame.quit()
             self.carte._hero.hp = 0
+#        print(self.carte._hero.wkcd)
+#        if time() - self.carte._hero.wkcd >= 0.2:
+#            self.carte._hero.wkcd = time()
 
         if 122 in pressed and pressed[122]:
+            self.carte._hero.walkingcoord = "N"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["z"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[122] = False
 
         if 113 in pressed and pressed[113]:
+            self.carte._hero.walkingcoord = "W"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["q"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[113] = False
 
         if 115 in pressed and pressed[115]:
+            self.carte._hero.walkingcoord = "S"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["s"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[115] = False
 
         if 100 in pressed and pressed[100]:
+            self.carte._hero.walkingcoord = "E"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["d"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[100] = False
+                
         if 98 in pressed and pressed[98]:
             theGame()._actions["b"](self.carte._hero)
             # self.carte.moveAllMonsters()

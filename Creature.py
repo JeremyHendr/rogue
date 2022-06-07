@@ -1,5 +1,6 @@
 from Element import Element
 import math,copy
+from time import *
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, armorpene=0.0, damagetype=None):
         Element.__init__(self, name, abr)
@@ -22,7 +23,7 @@ class Creature(Element):
         from utiles import theGame
         from Hero import Hero
         if isinstance(other,Hero):
-            if other.game_state == "Walking":
+            if other.game_state == "Walking" or self.game_state == "Walking":
                return False
         print("-> In meet",self,other)
         print(other.damage_type,self.state)
@@ -31,9 +32,12 @@ class Creature(Element):
             self.hp -= other._strength-(self.armor*(1-other.armor_penetration))
             theGame()._floor.damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-self.armor})
             theGame().addMessage("The "+str(other.name)+" hits the "+str(self.description()))
+            other.game_state = "Attack"
         if other.damage_type != None:
             self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])
             theGame().addMessage(self.name+" is "+" ".join([x for x in self.state.keys()]))
+        if other.hp<=0:
+            other.game_state = "Death"
         if self.hp <= 0:
             self.game_state = "Death"
             if isinstance(other, Hero):
@@ -45,6 +49,7 @@ class Creature(Element):
     def updateState(self):
         statetodelete = []
         for dic in self.state.items():
+            print(dic)
             # print("state loop",state,state[0])
             if dic[0] == "poisoned":
                 if self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor)):

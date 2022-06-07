@@ -1,4 +1,5 @@
 from Creature import Creature
+from time import *
 
 class Hero(Creature):
     def __init__(self, name="Hero", abbrv="@", hp=100, maxhp=100, strength=20, inventory=None, max_invent=10, maxmana=20):
@@ -18,6 +19,8 @@ class Hero(Creature):
         self.level = 0
         self.xp = 1
         self.game_state = "Idle"
+        self.walkingcoord = "E"
+        self.wkcd = time()
         self.max_mana = maxmana
         self.mana = 20
         self.gold = 20
