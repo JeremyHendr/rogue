@@ -8,7 +8,8 @@ from Map import Map
 from Creature import Creature 
 from Hero import Hero
 from PIL import Image
-
+#En clair, self.templist t'associes les cases de la map montrée à leur coordonnées
+#Et dans Map, il y a self.currentFoGMap qui te donne toutes les cases montrées
 class mainloop:
     inv = True
     carte = ""
@@ -100,13 +101,13 @@ class mainloop:
         imgsize = 64
         basex = self.screencoords[0]/2 - 288
         x, y = basex, self.screencoords[1]/4
+        self.templist = []
         self.startingaxis = Coord(x,y)
         finishingx = 0
-        b,a = -1,-1
+        a = -1
         for k in self.carte.fogOfWar():
-            a+=1
             for i in k:
-                b+=1
+                a+=1
                 if i == Map.empty:
                     pass
                 elif type(i) != str:
@@ -121,13 +122,13 @@ class mainloop:
                         img = self.pictures["sol"]
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
-                self.templist.append(([b,a],[x,y]))
+                self.templist.append((self.carte.currentFoGMap[a],[x,y]))
                 x += imgsize
-            b=-1
             finishingx = x
             x = basex
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
+        #print(self.templist)
         
     def checking(self, i, x, y):
         from Chest import Chest

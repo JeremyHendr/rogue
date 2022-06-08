@@ -31,6 +31,7 @@ class Map:
         self.damage_done = []
         self.fov = 4
         self.to_delete_list = []
+        self.currentFoGMap = []
 
     def __repr__(self):
         rep = ""
@@ -321,6 +322,7 @@ class Map:
             
     def fogOfWar(self):
         from Coord import Coord
+        self.currentFoGMap = []
         x, y = self.pos(self._hero).x, self.pos(self._hero).y
         coingauche = Coord(x-self.fov, y+self.fov)
         coindroit = Coord(x+self.fov, y - self.fov)
@@ -335,6 +337,7 @@ class Map:
              #   print("a = ",a,"b = ",b, d)
                 if a >= coingauche.x and a <= coindroit.x and b >= coindroit.y and b <= coingauche.y:
                     d.append(k)
+                    self.currentFoGMap.append([b,a])
                     #print("a = ",a,b,d)
                     # sleep(2)
             a = 0
