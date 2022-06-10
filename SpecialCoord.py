@@ -29,6 +29,7 @@ class SpecialCoord():
         else:
             repx = self.x + other.x
             repdecx = self.decx + other.decx
+        # print(self,other,SpecialCoord(repx,repy,repdecx,repdecy))
         return SpecialCoord(repx,repy,repdecx,repdecy)
 
     def __sub__(self,other):
@@ -63,7 +64,27 @@ class SpecialCoord():
         return math.sqrt((p.x ** 2 + p.y ** 2))
 
     def __mul__(self, s):
-        return SpecialCoord(self.x*s,self.y*s,self.decx*s,self.decy*s)
+        return SpecialCoord(self.x*s,self.y*s,self.decx*s,self.decy*s).verifCoord()
+
+    def verifCoord(self):
+        x_int_part = int(self.x)
+        x_dec_part = self.x-x_int_part
+        x = x_int_part
+        decx = int(x_dec_part*SpecialCoord.imgsize)+self.decx
+        if decx >= SpecialCoord.imgsize:
+            x += decx//SpecialCoord.imgsize
+            decx = decx%64
+
+        y_int_part = int(self.y)
+        y_dec_part = self.y - y_int_part
+        y = y_int_part
+        decy = int(y_dec_part * SpecialCoord.imgsize) + self.decy
+        if decy >= SpecialCoord.imgsize:
+            y += decy // SpecialCoord.imgsize
+            decy = decy % 64
+
+        return SpecialCoord(x,y,decx,decy)
+
 
     def direction(self):
         pass
