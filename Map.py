@@ -31,6 +31,7 @@ class Map:
         self.damage_done = []
         self.fov = 4
         self.to_delete_list = []
+        self.currentFoGMap = []
 
     def __repr__(self):
         rep = ""
@@ -269,21 +270,24 @@ class Map:
         # print("-> In move with",e,way,e.state)
         orig = self.pos(e)
         dest = orig + way
-        e.game_state = "Walking"
+        
         if dest in self and not self.get(dest) in Map.walllist:
             if self.get(dest) == Map.ground and not "frozen" in e.state:
                 self._mat[orig.y][orig.x] = Map.ground
                 self._mat[dest.y][dest.x] = e
                 self._elem[e] = dest
+                e.game_state = "Walking"
             elif self.get(dest) != Map.empty and not "frozen" in e.state:
                 # si l'elem a ete mis dans l'inventaire ou le monstre tue
                 if self.get(dest).meet(e):
+                    e.game_state = "Attack"
                     # si c'est pas un monstre on suppr la dest puis on bouge
                     if not isinstance(self.get(dest), Creature):
                         self.rm(dest)
                         self._mat[orig.y][orig.x] = Map.ground
                         self._mat[dest.y][dest.x] = e
                         self._elem[e] = dest
+                        e.game_state = "Walking"
                     # else:  # si c'est un monstre on supprime juste la dest
                     #     self.rm(dest)
                 elif isinstance(self.get(dest), Equipment):
@@ -293,6 +297,8 @@ class Map:
                     self._mat[orig.y][orig.x] = Map.ground
                     self._mat[dest.y][dest.x] = e
                     self._elem[e] = dest
+                    e.game_state = "Walking"
+                    
             elif isinstance(self.get(dest), Creature) and "frozen" in e.state:
                 if self.get(dest).meet(e):
                     self.rm(dest)
@@ -316,6 +322,7 @@ class Map:
             
     def fogOfWar(self):
         from Coord import Coord
+        self.currentFoGMap = []
         x, y = self.pos(self._hero).x, self.pos(self._hero).y
         coingauche = Coord(x-self.fov, y+self.fov)
         coindroit = Coord(x+self.fov, y - self.fov)
@@ -330,6 +337,7 @@ class Map:
              #   print("a = ",a,"b = ",b, d)
                 if a >= coingauche.x and a <= coindroit.x and b >= coindroit.y and b <= coingauche.y:
                     d.append(k)
+                    self.currentFoGMap.append([b,a])
                     #print("a = ",a,b,d)
                     # sleep(2)
             a = 0

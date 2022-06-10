@@ -7,6 +7,8 @@ class SpecialCoord():
         self.y = y
         self.decx = decx
         self.decy = decy
+        # if type(x)!="int" or type(y)!="int" or type(decy)!="int" or type(decx)!="int":
+        #     print("not integer given in SpecialCoord object")
 
     def __eq__(self,other):
         if isinstance(other,SpecialCoord):
@@ -37,7 +39,7 @@ class SpecialCoord():
             repy = self.y - other.y
             repdecy = self.decy - other.decy
         if self.decx - other.decx < 0:
-            repx = self.x - other.x - 1
+            repx = self.x - other.x
             repdecx = SpecialCoord.imgsize + (self.decx - other.decx)
         else:
             repx = self.x - other.x
@@ -45,7 +47,7 @@ class SpecialCoord():
         return SpecialCoord(repx, repy, repdecx, repdecy)
 
     def __repr__(self):
-        return "<"+str(int(self.x))+"."+str(int(self.decx))+" , "+str(int(self.y))+"."+str(int(self.decy))+">"
+        return "<"+str(self.x)+","+str(self.decx)+" ; "+str(self.y)+","+str(self.decy)+">"
 
     def distance(self,other):
         """

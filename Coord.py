@@ -49,13 +49,13 @@ class Coord:
     def toSpecialCoord(self):
         from utiles import theGame
         from SpecialCoord import SpecialCoord
-        mapc1 = theGame().convert_coord_list[0][0]
-        cartec1 = theGame().convert_coord_list[0][1]
+        mapc1 = theGame().templist[0][0]
+        cartec1 = theGame().templist[0][1]
         x = mapc1.x+(self.x-cartec1.x)//64
         y = mapc1.y+(self.y-cartec1.y)//64
         decx = (self.x-cartec1.x)%64
         decy = (self.y-cartec1.y)%64
-        print(theGame().convert_coord_list)
-        print(mapc1,cartec1,"  ",self)
+        print(theGame().templist)
+        print(mapc1,cartec1,"  ",theGame()._floor.pos(theGame()._hero),self)
         print(x,y,decx,decy)
         return SpecialCoord(x,y,decx,decy)

@@ -8,7 +8,8 @@ from Map import Map
 from Creature import Creature 
 from Hero import Hero
 from PIL import Image
-
+#En clair, theGame().templist t'associes les cases de la map montrée à leur coordonnées
+#Et dans Map, il y a self.currentFoGMap qui te donne toutes les cases montrées
 class mainloop:
     inv = True
     carte = ""
@@ -29,24 +30,35 @@ class mainloop:
         self.anim_mat = {}
         self.startingaxis = None
         self.finishingaxis = None
-        self.templist = []
+        self.touches = ""
 
-    def animation(self,tc):  # la boucle principale qui reprint tout
+    def animation(self):  # la boucle principale qui reprint tout
         pygame.display.init()
+        tc = self.touches
         self.screen = pygame.display.set_mode(self.screencoords)
         #self.screen.blit(self.bg1test, (0, 0))
         # self.chat(ms)
         self.background()
         self.foreground()
         self.action(tc.pressed)
-        if self.inv:
-            self.inventory_ui()
+        self.inventory_ui()
         self.health_bar()
         self.mana_bar()
         self.exp_bar()
         self.ui()
         pygame.display.update()
-
+        
+    def deathanimation(self):
+        t = time()
+        while time()-t<=1:
+            pygame.display.init()
+            self.screen = pygame.display.set_mode(self.screencoords)
+            self.background()
+            self.health_bar()
+            self.mana_bar()
+            self.exp_bar()
+            self.ui()
+        
     def realtime(self):
         from utiles import theGame
         from Bullet import Bullet
@@ -61,15 +73,17 @@ class mainloop:
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()
-            print(self.carte._hero.weapon,self.carte._hero.weapon.isrange)
+            print("weapon:",self.carte._hero.weapon," range:",self.carte._hero.weapon.isrange)
             if self.carte._hero.weapon.isrange:
                 print("in attack hero with range")
                 bl = theGame()._hero.weapon.bullet
                 hpos = theGame()._floor.pos(theGame()._hero)
                 dest = Coord(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]).toSpecialCoord()
+                print(theGame().templist)
                 print("adding bullet to list",hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type)
                 theGame().bullet_list.append(Bullet(hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type))
             else:
+                print("in attack hero with melee")
                 direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
                 if not direc:
                     direc = -1
@@ -83,19 +97,23 @@ class mainloop:
 
     def foreground(self):
         from utiles import theGame
-        # print(theGame().convert_coord_list)
+        from SpecialCoord import SpecialCoord
+        # print(theGame().templist)
         for bullet in theGame().bullet_list:
             bullet.updatePos()
-            print(bullet)
-            print(theGame().convert_coord_list.index(Coord(bullet.pos.x,bullet.pos.y)))
-            for couple in theGame().convert_coord_list:
-                if couple[0] == Coord(bullet.pos.x,bullet.pos.y):
-                    c = SpecialCoord(couple[1].x,couple[1].y,bullet.pos.decx,bullet.pos.decy)
-                    x = c.x+c.decx
-                    y = c.y+c.decy
-                    print("couple",couple[1],c,x,y)
+            # print(bullet)
+            # print(theGame().templist.index(Coord(bullet.pos.x,bullet.pos.y)))
+            for couple in theGame().templist:
+                if couple[0] == Coord(int(bullet.pos.x), int(bullet.pos.y)):
+                    c = SpecialCoord(couple[1].x, couple[1].y, bullet.pos.decx, bullet.pos.decy)
+                    x = int(c.x + c.decx)
+                    y = int(c.y + c.decy)
+                    print("couple", c, x, y) # couple, c,
+                    BarreVie1 = pygame.Rect(x, y, 20, 20)
+                    pygame.draw.rect(self.screen, (255, 0, 0), BarreVie1)
 
-            self.screen.blit(self.pictures["heal potion"], (x, y))
+                    #self.screen.blit(self.pictures["stick"], (x, y))
+                    break
 
     def ui(self):
         pygame.mouse.set_visible(False)
@@ -112,14 +130,13 @@ class mainloop:
         imgsize = 64
         basex = self.screencoords[0]/2 - 288
         x, y = basex, self.screencoords[1]/4
+        theGame().templist = []
         self.startingaxis = Coord(x,y)
         finishingx = 0
-        b,a = -1,-1
-        theGame().convert_coord_list = []
+        a = -1
         for k in self.carte.fogOfWar():
-            a+=1
             for i in k:
-                b+=1
+                a+=1
                 if i == Map.empty:
                     pass
                 elif type(i) != str:
@@ -133,14 +150,17 @@ class mainloop:
                         img = self.pictures["sol"]
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
-                theGame().convert_coord_list.append((Coord(b,a),Coord(x,y)))
+                c = self.carte.currentFoGMap[a]
                 x += imgsize
-            b=-1
+                theGame().templist.append((Coord(c[1],c[0]),Coord(x,y)))
+
             finishingx = x
             x = basex
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
+        # print(theGame().templist)
 
+        
     def checking(self, i, x, y):
         from Chest import Chest
         img = self.pictures["sol"]
@@ -150,11 +170,12 @@ class mainloop:
         if i.name in self.pictures and i.name != "Hero":
             self.screen.blit(self.pictures[i.name], (x, y))
         elif i.name == "Hero":
-            direc = (pygame.mouse.get_pos()[0] < self.screencoords[0]/2)
-            im = self.anim_lib.anim_hero(i.game_state)
+            im = self.anim_lib.anim_hero(i.game_state,i.walkingcoord)
             img, i.game_state = im[0], im[1]
             img = pygame.transform.scale(img, (64, 64))
-            img = pygame.transform.flip(img, direc, 0)
+            if i.game_state != "Walking":
+                direc = (pygame.mouse.get_pos()[0] < self.screencoords[0]/2)
+                img = pygame.transform.flip(img, direc, 0)
             self.screen.blit(img, (x, y))
 
         elif i.name == "Bat":
@@ -189,6 +210,39 @@ class mainloop:
                 self.carte._elem[i] = ""
                 self.carte.rm(self.carte.pos(i))
                 
+        elif i.name == "Snake":
+            img, act = self.anim_lib.anim_snake(
+                i.game_state)[0], self.anim_lib.anim_snake(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Blob":
+            img, act = self.anim_lib.anim_Blob(
+                i.game_state)[0], self.anim_lib.anim_Blob(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Stone Minotaur":
+            img, act = self.anim_lib.anim_Stone_Minotaur(
+                i.game_state)[0], self.anim_lib.anim_Stone_Minotaur(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
         elif isinstance(i, Chest):
             img = self.pictures["chest"]
             img = pygame.transform.scale(img, (64, 64))
@@ -196,6 +250,14 @@ class mainloop:
 
         else:
             self.screen.blit(self.pictures["imgnotdefined"], (x, y))
+        if isinstance(i,Creature) or isinstance(i,Hero):
+            for st in i.state:
+                print(st)
+                if st == "poisoned":
+                    im = self.anim_lib.anim_state()
+                    im = pygame.transform.scale(im, (64, 64))
+                    self.screen.blit(im,(x,y))
+                    
 
     def inventory_ui(self):
         x, y = self.screencoords[0]/2, self.screencoords[1]/8
@@ -220,15 +282,20 @@ class mainloop:
         
     def chestselect(self,l):
         self.background()
+        font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
-            x, y = self.screencoords[0]/2, self.screencoords[1]/2
-            basex = x
+            x, y = self.screencoords[0]/2-210, self.screencoords[1]/2-300
             a = -1
             imgsize = 64
             hitbox = []
             img1 = self.pictures["chestpresentation1"]
             img1 = pygame.transform.scale(img1, (420, 600))
             self.screen.blit(img1,(x,y))
+            x, y = self.screencoords[0]/2-64, self.screencoords[1]/2
+            text=font.render("Un coffre! Il contient: ",1,[255,255,255])
+            self.screen.blit(text,  (x-80,y-200))
+            basex = x
+            
             for i in range(2):
                 for k in range(3):
                     a+=1
@@ -255,7 +322,7 @@ class mainloop:
                             return l[a]
                         else:
                             a+=1
-
+    
     def weapon_ui(self,x,y):
         im2 = self.pictures["invweapon"]
         im2 = pygame.transform.scale(im2, (64, 64))
@@ -322,26 +389,38 @@ class mainloop:
         if 27 in pressed:
             pygame.quit()
             self.carte._hero.hp = 0
+#        print(self.carte._hero.wkcd)
+#        if time() - self.carte._hero.wkcd >= 0.2:
+#            self.carte._hero.wkcd = time()
 
         if 122 in pressed and pressed[122]:
+            self.carte._hero.walkingcoord = "N"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["z"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[122] = False
 
         if 113 in pressed and pressed[113]:
+            self.carte._hero.walkingcoord = "W"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["q"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[113] = False
 
         if 115 in pressed and pressed[115]:
+            self.carte._hero.walkingcoord = "S"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["s"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[115] = False
 
         if 100 in pressed and pressed[100]:
+            self.carte._hero.walkingcoord = "E"
+            self.anim_lib.hero_anim_time = time()
             theGame()._actions["d"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[100] = False
+                
         if 98 in pressed and pressed[98]:
             theGame()._actions["b"](self.carte._hero)
             # self.carte.moveAllMonsters()
@@ -355,9 +434,9 @@ class mainloop:
             self.carte._hero.game_state = "Attack"
             pressed["click"] = False
 
-        if 117 in pressed and pressed[117]:
-            theGame()._actions["u"](self.carte._hero)
-            pressed[117] = False
+        # if 117 in pressed and pressed[117]:
+        #     theGame()._actions["u"](self.carte._hero)
+        #     pressed[117] = False
             
         if 97 in pressed and pressed[97]:
             theGame()._actions["a"](self.carte._hero)
