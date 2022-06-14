@@ -88,18 +88,12 @@ class mainloop:
                 pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
                 if isinstance(self.carte.get(pos), Creature):
                     self.carte.get(pos).meet(self.carte._hero)
-                    if self.carte.get(pos).hp <= 0:
-                        self.carte.get(pos).game_state = "Death"
-                       # self.anim_mat[(pos.x,pos.y)] = [self.anim_mat[(pos.x,pos.y)],self.carte.get(pos)]
-                        del self.carte._elem[self.carte.get(pos)]
 
     def foreground(self):
         from utiles import theGame
         from SpecialCoord import SpecialCoord
-        l = []
         for bullet in theGame().bullet_list:
-            a = bullet.updatePos()
-            l.append(a)
+            bullet.updatePos()
             # print(bullet)
             for couple in theGame().templist:
                 if couple[0] == Coord(int(bullet.pos.x), int(bullet.pos.y)):
@@ -112,7 +106,7 @@ class mainloop:
 
                     #self.screen.blit(self.pictures["stick"], (x, y))
                     break
-        print(l)
+
 
     def ui(self):
         pygame.mouse.set_visible(False)

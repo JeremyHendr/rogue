@@ -44,7 +44,7 @@ class Bullet:
         theGame().log_update_pos_bullet[self].append("updatePos: old:"+str(self.pos)+"new"+str(self.pos + self.step)+" step:"+str(self.step)+" "+str(obj))
         if isinstance(self.shooter,Hero):
             if isinstance(obj,Creature) and not isinstance(obj,Hero):
-                obj.meet(Creature("bullet",0,"b",self.damage,0,self.armor_pene,self.damage_type))
+                print(obj.meet(Creature("bullet",0,"b",self.damage,0,self.armor_pene,self.damage_type)))
                 theGame().bullet_list.pop(theGame().bullet_list.index(self))
                 # print("LOG",theGame().log_update_pos_bullet[self])
         if obj in Map.walllist or obj == Map.empty:

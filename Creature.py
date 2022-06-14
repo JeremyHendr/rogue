@@ -41,6 +41,7 @@ class Creature(Element):
             if isinstance(other, Hero):
                 other.updateXp(self.xp_value)
                 other.updateMana(int(math.log(self.xp_value/100)*2))
+            del theGame()._floor._elem[self]
             return True
         return False
 
