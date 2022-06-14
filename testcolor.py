@@ -6,7 +6,7 @@ a = 1
     # for k in range(1):
 # for i in range(10):
 #     a+=1
-im = Image.open('64/upg_sword.png')
+im = Image.open('test gui/GUI/Maps/1.png')
 
 # im.show() # opens the imfrom PIL import im # import pillow library (can install with "pip install pillow")
 
@@ -30,12 +30,12 @@ for item in datas:
     # if item[3]!=0:
     #     print(item)
     #     sleep(0.1)
-    if item[0]>150 and item[1]>150 and item[2]>150 and item[3] !=0:
-        newData.append((0, 0, 125, 255))
+    if item[0]==255 and item[1]==255 and item[2]==255 and item[3] == 255:
+        newData.append((255, 255, 255, 0))
     else:
         newData.append(item)
 
 im.putdata(newData)
 
-im.save('64/swordfreezeig.png')
+im.save('test gui/GUI/Maps/1.png')
 

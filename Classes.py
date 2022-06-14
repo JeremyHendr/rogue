@@ -89,9 +89,12 @@ class anim_total:
             self.bat_anim_time = time()
             imgact = 0
             
-        elif not (state == "Death" or state =="Killing") and (imgact >= (self.bat_anim_nb2_3-1)):
+        elif state == "Death"  and (imgact >= (self.bat_anim_nb2_3-1)):
             self.bat_anim_time = time()
             self.bat_action = "Kill"
+            imgact = 0
+        elif state !="Death" and state !="Idle" and (imgact >= (self.bat_anim_nb2_3-1)):
+            self.bat_anim_time = time()
             imgact = 0
             
         elif (state == "Idle" or state=="Walking")  and imgact>=self.bat_anim_nb1-1:
@@ -99,7 +102,7 @@ class anim_total:
             self.bat_action = "Live"
             imgact = 0
         return pygame.image.load("Bat.sprites/"+str(state)+"/"+str(imgact)+".png"),self.bat_action
-        
+    
     def anim_goblin(self,state):
         imgact = int((time()-self.goblin_anim_time)*10)
         if state != self.goblin_last_state:

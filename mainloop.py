@@ -13,14 +13,14 @@ from PIL import Image
 class mainloop:
     inv = True
     carte = ""
-
+    #font = pygame.font.SysFont("Arial", 30)
     def __init__(self, carte):
         mainloop.carte = carte
         self.page_actuelle = 1  # 1 étant le ² principal, 0 le menu et 2 l'inventaire
         self.nb_fps = 30
         self.nbtimers = 2  # on aura besoin de bcp de timers
         self.timers = [time() for i in range(self.nbtimers)]
-        self.font = pygame.font.SysFont("Arial", 30)
+        
         self.bg1test = pygame.image.load("Menu-Background.png")
         self.screencoords = (pygame.display.Info().current_w,
                              pygame.display.Info().current_h)
@@ -45,7 +45,9 @@ class mainloop:
         self.health_bar()
         self.mana_bar()
         self.exp_bar()
+        self.minimap_ui()
         self.ui()
+        
         pygame.display.update()
         
     def deathanimation(self):
@@ -83,9 +85,14 @@ class mainloop:
                 # print(theGame().templist[0])
             else:
                 direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
-                if not direc:
-                    direc = -1
-                pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
+                if pygame.mouse.get_pos()[0]<(self.screencoords[1]/2)+30 and pygame.mouse.get_pos()[0]>(self.screencoords[1]/2)-30 and pygame.mouse.get_pos()[1]>(self.screencoords[1]/2):
+                    pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
+                    self.carte._hero.attackdir = "N"
+                else:
+                    if not direc:
+                        direc = -1
+                    pos = self.carte.pos(self.carte._hero) + Coord(direc, 0)
+                    self.carte._hero.attackdir = None
                 if isinstance(self.carte.get(pos), Creature):
                     self.carte.get(pos).meet(self.carte._hero)
 
@@ -116,7 +123,39 @@ class mainloop:
         cursor_rect.center = (a,b)
         self.screen.blit(cursorsp,cursor_rect)
         pygame.display.update()
+    
+    
+    def minimap_ui(self):
+        basex = self.screencoords[0]/5
+        x, y = basex, self.screencoords[1]/8
+        img = self.pictures["minimap"]
+        img = pygame.transform.scale(img, (270, 190))
+        self.screen.blit(img, (x, y))
+        pixelsize = 4
+        
+        basex += 50
+        y += 50
 
+        a = -1
+        for k in self.carte._mat:
+            for i in k:
+                a+=1
+                if isinstance(i,Hero):
+                    pixel = pygame.Rect(x, y, pixelsize, pixelsize)
+                    pygame.draw.rect(self.screen, (0, 0, 255), pixel)
+                # elif  i == Map.empty or type(i) != str or i == Map.ground:
+                #     pixel = pygame.Rect(x, y, pixelsize, pixelsize)
+                #     pygame.draw.rect(self.screen, (0, 0, 0), pixel)
+                
+                else:
+                    if i in Map.walllist:
+                        pixel = pygame.Rect(x, y, pixelsize, pixelsize)
+                        pygame.draw.rect(self.screen, (255, 255, 255), pixel)
+                x += pixelsize
+            x = basex
+            y += pixelsize
+            
+        
     def background(self):
         from utiles import theGame
         # self.screen.set_colorkey([128,0,128]) # don't copy color [0,0,0] on screen
@@ -161,7 +200,10 @@ class mainloop:
         if i.name in self.pictures and i.name != "Hero":
             self.screen.blit(self.pictures[i.name], (x, y))
         elif i.name == "Hero":
+            # if i.attackdir == None:
             im = self.anim_lib.anim_hero(i.game_state,i.walkingcoord)
+            # else:
+            # im = self.pictures["Attack" + str(i.attackdir)]
             img, i.game_state = im[0], im[1]
             img = pygame.transform.scale(img, (64, 64))
             if i.game_state != "Walking":
@@ -259,6 +301,11 @@ class mainloop:
                     im = self.anim_lib.anim_state()
                     im = pygame.transform.scale(im, (64, 64))
                     self.screen.blit(im,(x,y))
+                if st == "frozen":
+                    im = self.pictures["frozen"]
+                    im = pygame.transform.scale(im, (64, 64))
+                    self.screen.blit(im,(x,y))
+                    
 
     def inventory_ui(self):
         x, y = self.screencoords[0]/2, self.screencoords[1]/8
@@ -282,9 +329,11 @@ class mainloop:
         self.weapon_ui(basex,y)
         
     def chestselect(self,l):
-        self.background()
+        
         font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
+            self.screen = pygame.display.set_mode(self.screencoords)
+            self.background()
             x, y = self.screencoords[0]/2-210, self.screencoords[1]/2-300
             a = -1
             imgsize = 64
@@ -380,7 +429,7 @@ class mainloop:
         self.screen.blit(img,(self.screencoords[0]/3,self.screencoords[1]/6))
         
     def chat(self, ms):
-        self.screen.blit(self.font.render(
+        self.screen.blit(font.render(
             (str(ms)), 1, [255, 255, 255]),  (0, 0))
         pygame.display.update()
 

@@ -1,7 +1,6 @@
 import pygame
 class images:
     def __init__(self):
-        self.nb_img = 0
         self.img = {}
         self.buildup()
         
@@ -27,6 +26,7 @@ class images:
         self.img["Stairs"] = pygame.image.load("Silmar/terrain/upExit.gif")
         self.img["chest"] = pygame.image.load("Silmar/chest.gif")
         self.img["chestpresentation1"] = pygame.image.load("test gui/GUI/Maps/3.png")
+        self.img["minimap"] = pygame.image.load("test gui/GUI/Maps/1.png")
         self.img["chainmail"] = pygame.image.load("64/upg_armor.png")
         self.img["hand"] = pygame.image.load("Silmar/items/club.gif")
         self.img["imgnotdefined"] = pygame.image.load("Items/Ahammer1.png")
@@ -58,4 +58,12 @@ class images:
         self.img["¤"] = pygame.image.load("test/Concrete/"+wa+"30.png")
         
         self.img["sol"] = pygame.image.load("test/Concrete/"+fl+"16.png")
+        
+        self.img["TitleScreen"] = pygame.image.load("UI/TitleScreen.png")
+        self.img["frozen"] = pygame.image.load("Particles/Ice/Ice.png")
+        self.img["AttackN"] = pygame.image.load("Hero.sprites/Attack/AttackN.png")
+        
+        
+        
+        
         
