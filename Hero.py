@@ -19,6 +19,7 @@ class Hero(Creature):
         self.level = 0
         self.xp = 1
         self.game_state = "Idle"
+        self.attackdir = None
         self.walkingcoord = "E"
         self.wkcd = time()
         self.max_mana = maxmana
