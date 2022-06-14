@@ -7,7 +7,7 @@ from time import *
 from Classes import *
 from PIL import Image
 # random.seed(69)
-# random.seed(6)
+random.seed(6)
 pygame.init()
 
 theGame().play()

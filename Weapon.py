@@ -14,7 +14,7 @@ class Weapon(Equipment):
 
     def equip(self, creature):
         from utiles import theGame
-        print("-> In Weapon equip with",self.name,"actual Weapon",creature.weapon)
+        # print("-> In Weapon equip with",self.name,"actual Weapon",creature.weapon)
         if creature.weapon != self:
             theGame().addMessage("The hero equiped a " + self.name+" and gained "+str(self.strength-creature.weapon.strength)+" strength")
             creature._strength -= creature.weapon.strength

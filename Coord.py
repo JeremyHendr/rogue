@@ -55,7 +55,6 @@ class Coord:
         y = mapc1.y+(self.y-cartec1.y)//64
         decx = (self.x-cartec1.x)%64
         decy = (self.y-cartec1.y)%64
-        print(theGame().templist)
-        print(mapc1,cartec1,"  ",theGame()._floor.pos(theGame()._hero),self)
-        print(x,y,decx,decy)
-        return SpecialCoord(x,y,decx,decy)
+        # print(mapc1,cartec1,"  ",self)
+        # print(SpecialCoord(int(x),int(y),int(decx),int(decy)))
+        return SpecialCoord(int(x),int(y),int(decx),int(decy))

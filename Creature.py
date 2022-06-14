@@ -25,20 +25,18 @@ class Creature(Element):
         if isinstance(other,Hero):
             if other.game_state == "Walking" or self.game_state == "Walking":
                return False
-        print("-> In meet",self,other)
+        # print("-> In meet",self,other)
         if other._strength-self.armor > 0:
             self.hp -= other._strength-(self.armor*(1-other.armor_penetration))
             theGame()._floor.damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-self.armor})
             theGame().addMessage("The "+str(other.name)+" hits the "+str(self.description()))
             theGame().damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-(self.armor*(1-other.armor_penetration)),"who":self})
-            print(theGame().damage_done)
             other.game_state = "Attack"
         if other.damage_type != None:
             self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])
             theGame().addMessage(self.name+" is "+" ".join([x for x in self.state.keys()]))
-        if other.hp<=0:
-            other.game_state = "Death"
         if self.hp <= 0:
+            # print("     dead",self)
             self.game_state = "Death"
             if isinstance(other, Hero):
                 other.updateXp(self.xp_value)

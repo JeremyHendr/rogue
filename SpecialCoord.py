@@ -17,35 +17,21 @@ class SpecialCoord():
         return False
 
     def __add__(self,other):
-        if self.decy+other.decy >= SpecialCoord.imgsize:
-            repy = self.y + other.y + 1
-            repdecy = self.decy+other.decy-SpecialCoord.imgsize
-        else:
-            repy = self.y + other.y
-            repdecy = self.decy + other.decy
-        if self.decx+other.decx >= SpecialCoord.imgsize:
-            repx = self.x + other.x + 1
-            repdecx = self.decx + other.decx - SpecialCoord.imgsize
-        else:
-            repx = self.x + other.x
-            repdecx = self.decx + other.decx
-        # print(self,other,SpecialCoord(repx,repy,repdecx,repdecy))
-        return SpecialCoord(repx,repy,repdecx,repdecy)
+        imgsize = SpecialCoord.imgsize
+        b64tob10 = lambda c: Coord(c.x+(c.decx/imgsize),c.y+(c.decy/imgsize))
+        b10tob64 = lambda c: SpecialCoord(int(c.x),int(c.y),(int((c.x-int(c.x))*imgsize)),(int((c.y-int(c.y))*imgsize)))
+        a = b64tob10(self)
+        b = b64tob10(other)
+        return b10tob64(a+b)
 
     def __sub__(self,other):
-        if self.decy - other.decy < 0:
-            repy = self.y - other.y - 1
-            repdecy = SpecialCoord.imgsize + (self.decy - other.decy)
-        else:
-            repy = self.y - other.y
-            repdecy = self.decy - other.decy
-        if self.decx - other.decx < 0:
-            repx = self.x - other.x
-            repdecx = SpecialCoord.imgsize + (self.decx - other.decx)
-        else:
-            repx = self.x - other.x
-            repdecx = self.decx-other.decx
-        return SpecialCoord(repx, repy, repdecx, repdecy)
+        imgsize = SpecialCoord.imgsize
+        b64tob10 = lambda c: Coord(c.x+(c.decx/imgsize),c.y+(c.decy/imgsize))
+        b10tob64 = lambda c: SpecialCoord(int(c.x),int(c.y),(int((c.x-int(c.x))*imgsize)),(int((c.y-int(c.y))*imgsize)))
+        a = b64tob10(self)
+        b = b64tob10(other)
+        return b10tob64(a-b)
+
 
     def __repr__(self):
         return "<"+str(self.x)+","+str(self.decx)+" ; "+str(self.y)+","+str(self.decy)+">"
@@ -59,8 +45,9 @@ class SpecialCoord():
         > 1.5
         """
         convDec = lambda c,dec: c+(dec/SpecialCoord.imgsize)
-        c = self - other
+        c = other - self
         p = Coord(convDec(c.x,c.decx),convDec(c.y,c.decy))
+        # print("distance p",p,self,other,c)
         return math.sqrt((p.x ** 2 + p.y ** 2))
 
     def __mul__(self, s):
@@ -83,7 +70,7 @@ class SpecialCoord():
             y += decy // SpecialCoord.imgsize
             decy = decy % 64
 
-        return SpecialCoord(x,y,decx,decy)
+        return SpecialCoord(x,y,int(round(decx)),int(round(decy)))
 
 
     def direction(self):
@@ -101,3 +88,8 @@ class SpecialCoord():
 # <2.32 , 2.32>
 # False
 # 2.1213203435596424
+
+#<7,28 ; 16,15> <8,32 ; 18,32>
+a = SpecialCoord(7,16,-28,45)
+b = SpecialCoord(8,18,32,32)
+print(a+b)

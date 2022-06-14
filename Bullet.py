@@ -12,8 +12,12 @@ class Bullet:
         self.destination = destination
         self.speed = speed
         dist = self.pos.distance(self.destination)
+        # print("dist",dist)
         timetodest = dist/self.speed
+        # print("time",timetodest)
         step = (self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1))
+        # print("diff:",self.destination,"-",self.pos,"=",self.destination-self.pos)
+        # print("step",step,self.destination-self.pos,((timetodest*self.screen_refresh_rate)**(-1)))
         self.step = step
         # print("step:",self.destination-self.pos,timetodest*self.screen_refresh_rate,((timetodest*self.screen_refresh_rate)**(-1)),(self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1)))
         # print("created bullet with:",self.pos,self.destination,self.step," dist:",dist," time:",timetodest)
@@ -43,9 +47,10 @@ class Bullet:
                 obj.meet(Creature("bullet",0,"b",self.damage,0,self.armor_pene,self.damage_type))
                 theGame().bullet_list.pop(theGame().bullet_list.index(self))
                 # print("LOG",theGame().log_update_pos_bullet[self])
-        if obj in Map.walllist:
+        if obj in Map.walllist or obj == Map.empty:
             theGame().bullet_list.pop(theGame().bullet_list.index(self))
-            # print("LOG",theGame().log_update_pos_bullet[self])
+            print("LOG",theGame().log_update_pos_bullet[self])
 
+        return obj,self.pos,obj==Map.empty,Map.empty
 # b = Bullet(SpecialCoord(0,0),SpecialCoord(5,5),2)
 # print(b)

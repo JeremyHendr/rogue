@@ -79,7 +79,7 @@ class Hero(Creature):
         from Weapon import Weapon
         from Armor import Armor
         from Equipment import Equipment
-        print("in hero use, with item",item)
+        # print("in hero use, with item",item)
         if item == None:
             return None
         if item not in self._inventory:
@@ -106,24 +106,24 @@ class Hero(Creature):
 
     def updateXp(self,incr):
         from utiles import theGame
-        print("-> In update XP  enter hero",self.xp,self.level)
+        # print("-> In update XP  enter hero",self.xp,self.level)
         self.xp += incr
         list_key = [key for key in theGame().level_bonus.keys()]
-        print(self.level < len(theGame().level_bonus.keys()))
+        # print(self.level < len(theGame().level_bonus.keys()))
         if self.level < len(theGame().level_bonus.keys()) and self.xp >= list_key[self.level]:
             for item in theGame().level_bonus[list_key[self.level]].items():
-                print("attr",item[0],self.__getattribute__(item[0]),item[1])
+                # print("attr",item[0],self.__getattribute__(item[0]),item[1])
                 self.__setattr__(item[0],self.__getattribute__(item[0])+item[1])
-                print(item[1],"added to",self.__getattribute__(item[0]))
+                # print(item[1],"added to",self.__getattribute__(item[0]))
             self.updateLvl(1)
             theGame().addMessage("The hero gained " + str(incr) + " xp and gained one level")
         else:
             theGame().addMessage("The hero gained " + str(incr) + " xp")
-        print("exit hero", self.xp, self.level)
+        # print("exit hero", self.xp, self.level)
 
     def updateMana(self,incr):
         from utiles import theGame
-        print("-> In updateMana  enter hero", self.mana,"/",self.max_mana)
+        # print("-> In updateMana  enter hero", self.mana,"/",self.max_mana)
         if self.mana+incr <= self.max_mana:
             self.mana += incr
             if incr > 0:
