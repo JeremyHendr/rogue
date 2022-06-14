@@ -26,12 +26,12 @@ class Creature(Element):
             if other.game_state == "Walking" or self.game_state == "Walking":
                return False
         print("-> In meet",self,other)
-        print(other.damage_type,self.state)
         if other._strength-self.armor > 0:
-            print("armor",(self.armor*(1-other.armor_penetration)),self.armor,other.armor_penetration)
             self.hp -= other._strength-(self.armor*(1-other.armor_penetration))
             theGame()._floor.damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-self.armor})
             theGame().addMessage("The "+str(other.name)+" hits the "+str(self.description()))
+            theGame().damage_done.append({"coord":theGame()._floor.pos(self),"damage":other._strength-(self.armor*(1-other.armor_penetration)),"who":self})
+            print(theGame().damage_done)
             other.game_state = "Attack"
         if other.damage_type != None:
             self.state[other.damage_type[0]]=copy.deepcopy(other.damage_type[1])

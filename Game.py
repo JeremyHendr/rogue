@@ -64,6 +64,7 @@ class Game():
         self.templist = []
         self.bullet_list = []
         self.log_update_pos_bullet = {}
+        self.damage_done = []
 
     def buildFloor(self):
         from Map import Map

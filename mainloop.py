@@ -71,7 +71,7 @@ class mainloop:
                     monster.updateState()
 
 
-        if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
+        if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1.05:
             self.timers[1] = time()
             #print("weapon:",self.carte._hero.weapon," range:",self.carte._hero.weapon.isrange)
             if self.carte._hero.weapon.isrange:
