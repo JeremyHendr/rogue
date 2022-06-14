@@ -73,17 +73,17 @@ class mainloop:
 
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1:
             self.timers[1] = time()
-            print("weapon:",self.carte._hero.weapon," range:",self.carte._hero.weapon.isrange)
+            #print("weapon:",self.carte._hero.weapon," range:",self.carte._hero.weapon.isrange)
             if self.carte._hero.weapon.isrange:
-                print("in attack hero with range")
+               # print("in attack hero with range")
                 bl = theGame()._hero.weapon.bullet
                 hpos = theGame()._floor.pos(theGame()._hero)
                 dest = Coord(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]).toSpecialCoord()
-                print(theGame().templist)
-                print("adding bullet to list",hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type)
+                # print(theGame().templist)
+                # print("adding bullet to list",hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type)
                 theGame().bullet_list.append(Bullet(hpos,theGame()._hero,dest,bl.speed,bl.damage,bl.armor_pene,bl.damage_type))
             else:
-                print("in attack hero with melee")
+                # print("in attack hero with melee")
                 direc = (pygame.mouse.get_pos()[0] > self.screencoords[0]/2)
                 if not direc:
                     direc = -1
@@ -108,7 +108,7 @@ class mainloop:
                     c = SpecialCoord(couple[1].x, couple[1].y, bullet.pos.decx, bullet.pos.decy)
                     x = int(c.x + c.decx)
                     y = int(c.y + c.decy)
-                    print("couple", c, x, y) # couple, c,
+                    # print("couple", c, x, y) # couple, c,
                     BarreVie1 = pygame.Rect(x, y, 20, 20)
                     pygame.draw.rect(self.screen, (255, 0, 0), BarreVie1)
 
@@ -235,6 +235,17 @@ class mainloop:
         elif i.name == "Stone Minotaur":
             img, act = self.anim_lib.anim_Stone_Minotaur(
                 i.game_state)[0], self.anim_lib.anim_Stone_Minotaur(i.game_state)[1]
+            if act == "Live":
+                img = pygame.transform.scale(img, (64, 64))
+                self.screen.blit(img, (x, y))
+            else:
+                print("killed?")
+                self.carte._elem[i] = ""
+                self.carte.rm(self.carte.pos(i))
+                
+        elif i.name == "Rat":
+            img, act = self.anim_lib.anim_Rat(
+                i.game_state)[0], self.anim_lib.anim_Rat(i.game_state)[1]
             if act == "Live":
                 img = pygame.transform.scale(img, (64, 64))
                 self.screen.blit(img, (x, y))

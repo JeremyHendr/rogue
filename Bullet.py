@@ -15,8 +15,8 @@ class Bullet:
         timetodest = dist/self.speed
         step = (self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1))
         self.step = step
-        print("step:",self.destination-self.pos,timetodest*self.screen_refresh_rate,((timetodest*self.screen_refresh_rate)**(-1)),(self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1)))
-        print("created bullet with:",self.pos,self.destination,self.step," dist:",dist," time:",timetodest)
+        # print("step:",self.destination-self.pos,timetodest*self.screen_refresh_rate,((timetodest*self.screen_refresh_rate)**(-1)),(self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1)))
+        # print("created bullet with:",self.pos,self.destination,self.step," dist:",dist," time:",timetodest)
         self.damage = damage
         self.shooter = shooter
         self.armor_pene = armorpene
@@ -42,10 +42,10 @@ class Bullet:
             if isinstance(obj,Creature) and not isinstance(obj,Hero):
                 obj.meet(Creature("bullet",0,"b",self.damage,0,self.armor_pene,self.damage_type))
                 theGame().bullet_list.pop(theGame().bullet_list.index(self))
-                print("LOG",theGame().log_update_pos_bullet[self])
+                # print("LOG",theGame().log_update_pos_bullet[self])
         if obj in Map.walllist:
             theGame().bullet_list.pop(theGame().bullet_list.index(self))
-            print("LOG",theGame().log_update_pos_bullet[self])
+            # print("LOG",theGame().log_update_pos_bullet[self])
 
 # b = Bullet(SpecialCoord(0,0),SpecialCoord(5,5),2)
 # print(b)

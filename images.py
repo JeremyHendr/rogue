@@ -15,8 +15,15 @@ class images:
         self.img["portoloin"] = pygame.image.load("64/potionGreen.png")
         self.img["axe"] = pygame.image.load("64/axe.png")
         self.img["Hero"] = pygame.image.load("Silmar/monsters/cyclops.gif")
-        self.img["dragon"] = pygame.image.load("Monsters/DragonAdultSilver.png")    
-        self.img["chain"] = pygame.image.load("Items/ArmorChainMail.png")
+        self.img["dragon"] = pygame.image.load("Monsters/DragonAdultSilver.png") 
+        
+        self.img["heavy_armor"] = pygame.image.load("64/upg_armor.png")
+        self.img["armor"] = pygame.image.load("64/armor.png")
+        self.img["hammer"] = pygame.image.load("64/hammer.png")
+        self.img["katana"] = pygame.image.load("Katana/Mainkatana.png")
+        self.img["glock"] = pygame.image.load("Glock.png")
+        self.img["frozone"] = pygame.image.load("64/FreezeAxe.png")
+        
         self.img["Stairs"] = pygame.image.load("Silmar/terrain/upExit.gif")
         self.img["chest"] = pygame.image.load("Silmar/chest.gif")
         self.img["chestpresentation1"] = pygame.image.load("test gui/GUI/Maps/3.png")

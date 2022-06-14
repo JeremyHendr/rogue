@@ -15,13 +15,14 @@ class Game():
         from utiles import heal, teleport, cheat_hp, cheat_str
         from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
-                        1: [Weapon("gun", "|", 10),Weapon("stick","g",isrange=True,bullet=Bullet())],
+                        1: [Weapon("stick", "|", 10),Weapon("glock","g",isrange=True,bullet=Bullet())],
                         2: [Weapon("axe", "a", 20)],
-                        3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("chainmail", "c", 5)],
-                        5: [Weapon("chainBraker","§",15,armorpene=0.5),Weapon("frostBlade","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
-                        10: [Weapon("katana", "k", 60), Armor("himo", "h", 10)]}
+                        3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("armor", "c", 5)],
+                        5: [Weapon("hammer","m",15,armorpene=0.5),Weapon("frozone","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
+                        10: [Weapon("katana", "k", 60), Armor("heavy_armor", "h", 10)]}
         
         self.monsters = {0: [Creature("Goblin", 40), 
+                             Creature("Rat",30,"R"),
                              Creature("Bat", 20, "W")],
                     1: [Creature("Ork", 60, strength=20),
                         Creature("Blob", 100),

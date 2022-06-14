@@ -44,6 +44,12 @@ class anim_total:
         self.Stone_Minotaur_anim_nb2_3 = 10
         self.Stone_Minotaur_anim_time = time()
         
+        self.Rat_last_state = "Idle"
+        self.Rat_action = "Live"
+        self.Rat_anim_nb1 = 20
+        self.Rat_anim_nb2_3 = 10
+        self.Rat_anim_time = time()
+        
         self.state_anim_time = time()
         
     def anim_hero(self,state,walkingpos):
@@ -204,6 +210,28 @@ class anim_total:
             self.Stone_Minotaur_action = "Live"
             imgact = 0
         return pygame.image.load("Stone_Minotaur.sprites/"+str(state)+"/"+str(imgact)+".png"),self.Stone_Minotaur_action
+    
+    def anim_Rat(self,state):
+        imgact = int((time()-self.Rat_anim_time)*10)
+        if state != self.Rat_last_state:
+            self.Rat_last_state = state
+            self.Rat_action = "Live"
+            self.Rat_anim_time = time()
+            imgact = 0
+            
+        elif state == "Death"  and (imgact >= (self.Rat_anim_nb2_3-1)):
+            self.Rat_anim_time = time()
+            self.Rat_action = "Kill"
+            imgact = 0
+        elif state !="Death" and state !="Idle" and (imgact >= (self.Rat_anim_nb2_3-1)):
+            self.Rat_anim_time = time()
+            imgact = 0
+            
+        elif (state == "Idle" or state=="Walking")  and imgact>=self.Rat_anim_nb1-1:
+            self.Rat_anim_time = time()
+            self.Rat_action = "Live"
+            imgact = 0
+        return pygame.image.load("Rat.sprites/"+str(state)+"/"+str(imgact)+".png"),self.Rat_action
     
     def anim_state(self):
         imgact = int((time()-self.state_anim_time)*100)
