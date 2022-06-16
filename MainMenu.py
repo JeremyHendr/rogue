@@ -39,7 +39,7 @@ def MenuZero():
         l = ["ng","o","c","e"]
         li = [ng,o,c,e]
         for i in range(4):
-            im = pygame.image.load("UI/"+l[i]+"_"+str(li[i])+".png")
+            im = pygame.image.load("Assets/UI/"+l[i]+"_"+str(li[i])+".png")
             screen.blit(im,(x,yng + imgsizey*i))
             
         for event in pygame.event.get():
@@ -63,7 +63,7 @@ def MenuZero():
         
 def ui(screen):
     pygame.mouse.set_visible(False)
-    cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
+    cursorsp = pygame.image.load('Assets/Mpointer.png')
     cursor_rect = cursorsp.get_rect()
     a,b = pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]
     cursor_rect.center = (a,b)

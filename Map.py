@@ -218,8 +218,8 @@ class Map:
 
     def putWalls(self):
         from Coord import Coord
-        self._mat.insert(0,[Map.empty for i in range(self.size)])
-        self._mat.insert(len(self._mat)-1,[Map.empty for i in range(self.size)])
+        #self._mat.insert(0,[Map.empty for i in range(self.size)])
+        
         for x in range(len(self)):
             for y in range(len(self)):
                 if self.get(Coord(x,y)) == Map.empty and self.surroundingElementsCoord(Coord(x,y)):
@@ -342,7 +342,7 @@ class Map:
                     self.currentFoGMap.append([b,a])
                     #print("a = ",a,b,d)
                     # sleep(2)
-            a = 0
+            a = -1
             if len(d) > 0:
                 c.append(d)
         return c

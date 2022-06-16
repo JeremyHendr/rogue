@@ -12,9 +12,9 @@ class Hero(Creature):
             self._inventory = inventory
         self.max_hp = maxhp
         self.max_invent = max_invent
-        self.base_weapon = Weapon("hand","h",0)
+        self.base_weapon = Weapon("wooden_stick","h",0)
         self.weapon = self.base_weapon
-        self.base_protection = Armor("t-shirt","t",0)
+        self.base_protection = Armor("helmet","t",0)
         self.protection = self.base_protection
         self.level = 0
         self.xp = 1

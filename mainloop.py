@@ -21,7 +21,6 @@ class mainloop:
         self.nbtimers = 2  # on aura besoin de bcp de timers
         self.timers = [time() for i in range(self.nbtimers)]
         
-        self.bg1test = pygame.image.load("Menu-Background.png")
         self.screencoords = (pygame.display.Info().current_w,
                              pygame.display.Info().current_h)
         self.imgsetter = images()
@@ -33,20 +32,21 @@ class mainloop:
         self.touches = ""
 
     def animation(self):  # la boucle principale qui reprint tout
-        pygame.display.init()
-        tc = self.touches
-        self.screen = pygame.display.set_mode(self.screencoords)
-        #self.screen.blit(self.bg1test, (0, 0))
-        # self.chat(ms)
-        self.background()
-        self.foreground()
-        self.action(tc.pressed)
-        self.inventory_ui()
-        self.health_bar()
-        self.mana_bar()
-        self.exp_bar()
-        self.minimap_ui()
-        self.ui()
+        # pygame.display.init()
+        # tc = self.touches
+        # self.screen = pygame.display.set_mode(self.screencoords)
+        # #self.screen.blit(self.bg1test, (0, 0))
+        # # self.chat(ms)
+        # self.background()
+        # self.foreground()
+        # self.action(tc.pressed)
+        # self.inventory_ui()
+        # self.health_bar()
+        # self.mana_bar()
+        # self.exp_bar()
+        # self.minimap_ui()
+        # self.ui()
+        self.backgroundui()
         
         pygame.display.update()
         
@@ -113,11 +113,31 @@ class mainloop:
 
                     #self.screen.blit(self.pictures["stick"], (x, y))
                     break
-
+    def backgroundui(self):
+        pygame.display.init()
+        
+        self.screen = pygame.display.set_mode(self.screencoords)
+        tc = self.touches
+        sx,sy = self.screencoords[0],self.screencoords[1]
+        mx,my = pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]
+        img = self.pictures["gamebg"]
+        img = pygame.transform.scale(img, (sx, sy))
+        self.screen.blit(img, (0, 0))
+        #self.screen.blit(self.bg1test, (0, 0))
+        # self.chat(ms)
+        self.background()
+        self.foreground()
+        self.action(tc.pressed)
+        self.inventory_ui()
+        self.health_bar()
+        self.mana_bar()
+        self.exp_bar()
+        self.minimap_ui()
+        self.ui()
 
     def ui(self):
         pygame.mouse.set_visible(False)
-        cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
+        cursorsp = pygame.image.load('Assets/Mpointer.png')
         cursor_rect = cursorsp.get_rect()
         a,b = pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]
         cursor_rect.center = (a,b)
@@ -126,16 +146,15 @@ class mainloop:
     
     
     def minimap_ui(self):
-        basex = self.screencoords[0]/5
+        basex = 50
         x, y = basex, self.screencoords[1]/8
         img = self.pictures["minimap"]
         img = pygame.transform.scale(img, (270, 190))
         self.screen.blit(img, (x, y))
         pixelsize = 4
-        
-        basex += 50
+        basex += 100
+        x = basex
         y += 50
-
         a = -1
         for k in self.carte._mat:
             for i in k:
@@ -308,7 +327,7 @@ class mainloop:
                     
 
     def inventory_ui(self):
-        x, y = self.screencoords[0]/2, self.screencoords[1]/8
+        x, y = self.screencoords[0]-200, self.screencoords[1]*(2/3)
         im = self.pictures["invplaceholder"]
         im = pygame.transform.scale(im, (64, 64))
         basex = x
@@ -380,9 +399,15 @@ class mainloop:
         img = pygame.transform.scale(img, (64, 64))
         self.screen.blit(im2,(x+32*4,y))
         self.screen.blit(img,(x+32*4,y))
+        im2 = self.pictures["invarmor"]
+        im2 = pygame.transform.scale(im2, (64, 64))
+        img = self.pictures[self.carte._hero.protection.name]
+        img = pygame.transform.scale(img, (64, 64))
+        self.screen.blit(im2,(x+32*2,y))
+        self.screen.blit(img,(x+32*2,y))
         
     def health_bar(self):
-        x, y = self.screencoords[0]/8, self.screencoords[1]/4
+        x, y = self.screencoords[0]-200, self.screencoords[1]/6
         BarreVie1 = pygame.Rect(x, y, 108, 105)
         BarreVie2 = pygame.Rect(x, y, 108, 105*(self.carte._hero.max_hp-self.carte._hero.hp)/self.carte._hero.max_hp)
         pygame.draw.rect(self.screen, (255, 0, 0), BarreVie1)
@@ -395,16 +420,16 @@ class mainloop:
         
     def mana_bar(self):
         #im = self.pictures["manaplaceholder"]
-        x,y = self.screencoords[0]/3,self.screencoords[1]/5
+        x,y = self.screencoords[0]-328,self.screencoords[1]/6
         im = self.pictures["manabg"]
-        self.screen.blit(im,(self.screencoords[0]/3,self.screencoords[1]/5))
+        self.screen.blit(im,(x,y))
         if self.carte._hero.mana == 0:
             return None
-        im = Image.open('Blue_bar.png')
+        im = Image.open('Assets/Blue_bar.png')
         im = im.crop((0,0,128 - 128*((self.carte._hero.max_mana-self.carte._hero.mana)/self.carte._hero.max_mana),128))
-        im.save("testmana.png")
-        im = pygame.image.load("testmana.png")
-        self.screen.blit(im,(self.screencoords[0]/3,self.screencoords[1]/5))
+        im.save("Assets/currentmana.png")
+        im = pygame.image.load("Assets/currentmana.png")
+        self.screen.blit(im,(x,y))
         
     def exp_bar(self):
         from utiles import theGame
@@ -414,24 +439,19 @@ class mainloop:
             if b==a:
                 currentrequiredxp = i
             b+=1
-        x,y = self.screencoords[0]/3,self.screencoords[1]/6
+        x,y = self.screencoords[0]-328,self.screencoords[1]/8
         im = self.pictures["manabg"]
-        self.screen.blit(im,(self.screencoords[0]/3,self.screencoords[1]/6))
+        self.screen.blit(im,(x,y))
         
-        im = Image.open('Green_bar.png')
+        im = Image.open('Assets/Green_bar.png')
         if (self.carte._hero.xp/currentrequiredxp)*128<1:
             g = 1
         else:
             g = (self.carte._hero.xp/currentrequiredxp)*128
         im = im.crop((0,0,g,128))
-        im.save("testxp.png")
-        img = pygame.image.load("testxp.png")
-        self.screen.blit(img,(self.screencoords[0]/3,self.screencoords[1]/6))
-        
-    def chat(self, ms):
-        self.screen.blit(font.render(
-            (str(ms)), 1, [255, 255, 255]),  (0, 0))
-        pygame.display.update()
+        im.save("Assets/currentxp.png")
+        img = pygame.image.load("Assets/currentxp.png")
+        self.screen.blit(img,(x,y))
 
     def action(self, pressed):
         # print(pressed)
