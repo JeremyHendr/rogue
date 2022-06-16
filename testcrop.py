@@ -1,14 +1,14 @@
 from PIL import Image 
 a = -1
-imgsize = 64
-for i in range(8):    
+imgsize = 32
+for i in range(9):    
     for k in range(8):
         a+=1
-        im = Image.open('Ice_Spell/icicle_0.png')
-        im = im.crop((k*imgsize,i*imgsize,512,512))
+        im = Image.open('The_Abomination.sprites/tuxfire.png')
+        im = im.crop((k*imgsize,i*imgsize,256,288))
         im = im.crop( (0,0 , imgsize, imgsize) ) # previously, image was 826 pixels wide, cropping to 825 pixels wide
-        im.save("Ice_Spell/"+str(a)+".png") # saves the image
-#  # opens the imagefrom PIL import Image # import pillow library (can install with "pip install pillow")
+        im.save("The_Abomination.sprites/"+str(a)+".png") # saves the image
+  # opens the imagefrom PIL import Image # import pillow library (can install with "pip install pillow")
 #
 #from PIL import Image # import pillow library (can install with "pip install pillow")
 #a = 2
@@ -23,3 +23,10 @@ for i in range(8):
 
 
 
+# from PIL import Image
+# a = -1
+# for i in range(73):
+#     a += 1
+#     im = Image.open("Particles/Fire/"+str(a)+".png")
+#     im = im.resize((64,64))
+#     im.save("Particles/Fire/"+str(a)+".png")

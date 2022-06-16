@@ -3,6 +3,10 @@ import math,copy
 from time import *
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, armorpene=0.0, damagetype=None):
+        """
+        :param armorpene: float (0-1), armor penetration in percentage
+        :param damagetype: dictionnary, specifies the damage type done by this creature
+        """
         Element.__init__(self, name, abr)
         self.hp = hp
         self.armor = armor
@@ -20,8 +24,14 @@ class Creature(Element):
         return s+"("+str(self.hp)+")"
 
     def meet(self,other):
+        """
+        other is attacking self
+        :param other: Creature isntance
+        :return: True if self is dead, False else
+        """
         from utiles import theGame
         from Hero import Hero
+        maginames = ["poison","Magic","fire"]
         if isinstance(other,Hero):
             if other.game_state == "Walking" or self.game_state == "Walking":
                return False
@@ -38,17 +48,21 @@ class Creature(Element):
         if self.hp <= 0:
             # print("     dead",self)
             self.game_state = "Death"
-            if isinstance(other, Hero):
-                other.updateXp(self.xp_value)
-                other.updateMana(int(math.log(self.xp_value/100)*2))
-            del theGame()._floor._elem[self]
+            if isinstance(other, Hero) or other.name in maginames:
+                theGame()._hero.updateXp(self.xp_value)
+                theGame()._hero.updateMana(int(math.log(self.xp_value/100)*2))
+            if other.name not in maginames:
+                del theGame()._floor._elem[self]
             return True
         return False
 
     def updateState(self):
+        """
+        update all the effects applied on the hero
+        """
         statetodelete = []
-        for dic in self.state.items():
-            print(dic)
+        for dic in self.state.items():  
+            #print(dic)
             # print("state loop",state,state[0])
             if dic[0] == "poisoned":
                 if self.meet(Creature("poison", 0, "", dic[1]["damage"] + self.armor)):
@@ -58,9 +72,13 @@ class Creature(Element):
                     self.state[dic[0]]["time"] -= 1
                 else:
                     statetodelete.append(dic[0])
-            elif dic[0] == "burning":
+            if dic[0] == "burning":
                 if self.meet(Creature("fire", 0, "", dic[1]["damage"] + self.armor)):
                     self.game_state = "Death"
+                if self.state[dic[0]]["time"] > 0:
+                    self.state[dic[0]]["time"] -= 1
+                else:
+                    statetodelete.append(dic[0])
             elif dic[0] == "frozen":
                 if self.state[dic[0]]["time"] > 0:
                     self.state[dic[0]]["time"] -= 1

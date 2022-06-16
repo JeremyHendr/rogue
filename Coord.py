@@ -1,10 +1,8 @@
 import math
 class Coord:
     def __init__(self,x,y):
-        # print("in coord")
         self.x = x
         self.y = y
-
 
     def get_x(self):
         return self.x
@@ -47,6 +45,13 @@ class Coord:
       return Coord(0,1)
 
     def toSpecialCoord(self):
+        """
+        converts a Coord in pixel (pygame) in Coord with a integer part that corrspond to the Map coord
+        then a decimal part between 0 to 64 pixels
+        exemple:
+         SpecialCoord(2,5,32,32) is (2.5;5.5) on the Map
+        :return: SpecialCoord instance
+        """
         from utiles import theGame
         from SpecialCoord import SpecialCoord
         mapc1 = theGame().templist[0][0]
@@ -55,6 +60,4 @@ class Coord:
         y = mapc1.y+(self.y-cartec1.y)//64
         decx = (self.x-cartec1.x)%64
         decy = (self.y-cartec1.y)%64
-        # print(mapc1,cartec1,"  ",self)
-        # print(SpecialCoord(int(x),int(y),int(decx),int(decy)))
         return SpecialCoord(int(x),int(y),int(decx),int(decy))

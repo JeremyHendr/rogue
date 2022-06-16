@@ -4,6 +4,7 @@ from Creature import Creature
 import random
 
 class Map:
+    """the main matrix where all elements of the game are stored"""
     # https://theasciicode.com.ar/extended-ascii-code/box-drawings-double-line-vertical-left-character-ascii-code-185.html
     #alt+ 200:╚ 201:╔  196─ '┬┬┴ 192└ 191┐ ¢ 188╝ 187╗ 186║  █ 219, ▄ 220, ▬ 22
     ground = "."
@@ -56,21 +57,31 @@ class Map:
         return False
 
     def checkCoord(self,c):
+        """make sure the coordinates c are in the matrix"""
         if not isinstance(c,Coord):
             raise TypeError('Not a Coord',c)
         if not (0 <= c.x and c.x < self.size and 0 <= c.y and c.y < self.size):
             raise  IndexError('Out of map coord',c)
 
     def checkElement(self,e):
+        """make sure the element e is an Element instance"""
         from Element import Element
         if not isinstance(e,Element):
             raise TypeError('Not a Element',e)
 
     def get(self,c):
+        """
+        :param c: Coord instance
+        :return: the item on the coordinate c
+        """
         self.checkCoord(c)
         return self._mat[c.y][c.x]
 
     def pos(self,item):
+        """
+        :param item: Element instance
+        :return: an Coord instance of the coordinate from item in the map
+        """
         self.checkElement(item)
         for i in range(len(self._mat)):
             if item in self._mat[i]:
@@ -78,6 +89,12 @@ class Map:
         return None
 
     def put(self,c,item):
+        """
+        places the item on the coordinate c in the map
+        :param c: Coord instance
+        :param item: Element instance
+        :return: None
+        """
         self.checkCoord(c)
         self.checkElement(item)
         if self._mat[c.y][c.x] != Map.ground:
@@ -90,20 +107,19 @@ class Map:
         return None
 
     def rm(self,c):
+        """
+        remove the element on the coordinate c
+        :param c: Coord instance
+        """
         # self.checkCoord(c)
         del self._elem[self.get(c)]
         self._mat[c.y][c.x] = Map.ground
 
     def addRoom(self,room):
-        # self._roomsToReach.append(room1)
-        # a=-1
-        # for lines in self._mat:
-        #     a+=1
-        #     b=0
-        #     for case in lines:
-        #         if a>=room1.c1.x and a<=room1.c2.x and b>=room1.c1.y and b<=room1.c2.y:
-        #             self._mat[b][a] = Map.ground
-        #         b+=1
+        """
+        add room in the map
+        :param room: Room instance
+        """
         self._roomsToReach.append(room)
         for x in range(len(self)):
             for y in range(len(self)):
@@ -111,18 +127,31 @@ class Map:
                     self._mat[y][x] = Map.ground
 
     def findRoom(self,coord):
+        """
+        :param coord: Coord instance
+        :return: the room that contains the coordinate c
+        """
         for i in self._roomsToReach:
             if coord in i:
                 return i
         return False
 
     def intersectNone(self,room):
+        """
+        make sure that there is enough space for the room in the map
+        :param room:
+        :return: True if it intersects with no other rooms, False else
+        """
         for i in self._roomsToReach:
             if i.intersect(room):
                 return False
         return True
 
     def dig(self,coord):
+        """
+        replace the coord in map with Map.ground
+        :param coord: Coord instance
+        """
         self._mat[coord.y][coord.x] = Map.ground
         a = self.findRoom(coord)
         if a != False:
@@ -130,6 +159,11 @@ class Map:
             self._rooms.append(a)
 
     def corridor(self,start,end):
+        """
+        make a corridor between start and end
+        :param start: Room instance
+        :param end: Room instance
+        """
         coord = start
         while (start.y < end.y and coord.y < end.y) or (start.y > end.y and coord.y > end.y):
             coord += Coord(0, -1 if start.y > end.y else 1)
@@ -192,6 +226,10 @@ class Map:
                 break
 
     def surroundingElementsCoord(self,c):
+        """
+        :param c: Coord instance
+        :return: return True if there is anything else than Map.empty around the coordinate c, False else
+        """
         from Coord import Coord
         for x in (c.x-1,c.x+1):
             for y in (c.y-1,c.y+1):
@@ -199,6 +237,10 @@ class Map:
                     return True
 
     def surroundingWallsCardinal(self,c):
+        """
+        :param c: Coord instance
+        :return: a list of cardinal point (N,S,E,O) indicating where the surrounding walls are
+        """
         from Coord import Coord
         l = []
         # print("-> In suroundingwall with",c,self.get(c))
@@ -217,6 +259,7 @@ class Map:
         return l
 
     def putWalls(self):
+        """places walls all around the rooms and corridors"""
         from Coord import Coord
         #self._mat.insert(0,[Map.empty for i in range(self.size)])
         
@@ -265,7 +308,11 @@ class Map:
                     #     print(self.get(Coord(x,y)))
 
     def move(self, e, way):
-        """Moves the element e in the direction way."""
+        """
+        Moves the element e in the direction way
+        :param e: Element instance
+        :param way: Coord instance, direction where the element should move
+        """
         from Equipment import Equipment
         from Creature import Creature
         
@@ -301,9 +348,7 @@ class Map:
                     self._elem[e] = dest
                     e.game_state = "Walking"
                     
-            elif isinstance(self.get(dest), Creature) and "frozen" in e.state:
-                if self.get(dest).meet(e):
-                    self.rm(dest)
+
 
             for elem in self.hidden_elem:
                 if self.get(elem[0]) == Map.ground:
@@ -311,6 +356,7 @@ class Map:
                     self.hidden_elem.pop(self.hidden_elem.index(elem))
 
     def moveAllMonsters(self):
+        """moves all the monsters on the map if they are at less than 6 block away"""
         from Creature import Creature
         global rep
 
@@ -319,10 +365,14 @@ class Map:
                 self.move(obj, self._elem[obj].direction(self._elem[self._hero]))
         # print("todellist",self.to_delete_list)
         for c in self.to_delete_list:
+            print("deleted")
             self.rm(c)
             self.to_delete_list.pop(self.to_delete_list.index(c))
             
     def fogOfWar(self):
+        """
+        :return:  a matrix of the blocks surrounding the Hero
+        """
         from Coord import Coord
         self.currentFoGMap = []
         x, y = self.pos(self._hero).x, self.pos(self._hero).y

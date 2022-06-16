@@ -9,10 +9,13 @@ class images:
         self.img["gold"] = pygame.image.load("Assets/coin.png")
         self.img["stick"] = pygame.image.load("Assets/upg_spear.png")
         self.img["sword"] = pygame.image.load("Assets/sword.png")
-        self.img["telepotion"] = pygame.image.load("Assets/potionBlue.png")
-        self.img["portoloin"] = pygame.image.load("Assets/potionGreen.png")
+
+        self.img["mana_potion"] = pygame.image.load("Assets/potionBlue.png")
+        self.img["telepotion"] = pygame.image.load("Assets/potionGreen.png")
+
         self.img["axe"] = pygame.image.load("Assets/axe.png")
 
+        """associate an image to an object on the map"""
         
         self.img["heavy_armor"] = pygame.image.load("Assets/upg_armor.png")
         self.img["armor"] = pygame.image.load("Assets/armor.png")
@@ -21,13 +24,12 @@ class images:
         self.img["glock"] = pygame.image.load("Assets/Glock.png")
         self.img["frozone"] = pygame.image.load("Assets/FreezeAxe.png")
         
-        self.img["Stairs"] = pygame.image.load("Assets/upExit.gif")
+        self.img["Stairs"] = pygame.image.load("Assets/Stairs.png")
         self.img["chest"] = pygame.image.load("Assets/chest.gif")
         self.img["chestpresentation1"] = pygame.image.load("Assets/Maps/3.png")
         self.img["minimap"] = pygame.image.load("Assets/Maps/1.png")
         self.img["chainmail"] = pygame.image.load("Assets/upg_armor.png")
         self.img["wooden_stick"] = pygame.image.load("Assets/club.gif")
-        self.img["imgnotdefined"] = pygame.image.load("Assets/Ahammer1.png")
         self.img["helmet"] = pygame.image.load("Assets/helmet.png")
         self.img["orb1"] = pygame.image.load("Assets/Orb/itsmars_orb_back1.png")
         self.img["orb2"] = pygame.image.load("Assets/Orb/itsmars_orb_back2.png")
@@ -37,9 +39,9 @@ class images:
         self.img["orb6"] = pygame.image.load("Assets/Orb/itsmars_orb_shadow.png")
         self.img["orb7"] = pygame.image.load("Assets/Orb/itsmars_scroll_fill.png")
         self.img["orb8"] = pygame.image.load("Assets/Orb/itsmars_scroll_lip.png")
-        self.img["invplaceholder"] = pygame.image.load("Assets/Inv sprites/0.gif")
-        self.img["invweapon"] = pygame.image.load("Assets/Inv sprites/21.gif")
-        self.img["invarmor"] = pygame.image.load("Assets/Inv sprites/39.gif")
+        self.img["invplaceholder"] = pygame.image.load("Assets/Inv sprites/0.png")
+        self.img["invweapon"] = pygame.image.load("Assets/Inv sprites/21.png")
+        self.img["invarmor"] = pygame.image.load("Assets/Inv sprites/39.png")
         self.img["manabg"] = pygame.image.load("Assets/Bar1.png")
         self.img["gamebg"] = pygame.image.load("Assets/background.png")
         wa = "wall1/"
@@ -57,12 +59,20 @@ class images:
         self.img["╬"] = pygame.image.load("Assets/Concrete/"+wa+"7.png")
         self.img["#"] = pygame.image.load("Assets/Concrete/"+wa+"47.png")
         self.img["¤"] = pygame.image.load("Assets/Concrete/"+wa+"30.png")
+
         
         self.img["sol"] = pygame.image.load("Assets/Concrete/"+fl+"16.png")
         
         self.img["TitleScreen"] = pygame.image.load("Assets/UI/TitleScreen.png")
-        self.img["frozen"] = pygame.image.load("Particles/Ice/Ice.png")
-        self.img["AttackN"] = pygame.image.load("Hero.sprites/Attack/AttackN.png")
+        self.img["frozen"] = pygame.image.load("Assets/Particles/Ice/Ice.png")
+        self.img["AttackN"] = pygame.image.load("Assets/Hero.sprites/Attack/AttackN.png")
+        
+        self.img["Impending_Terror"] = pygame.image.load("Assets/Impending_Terror.png")
+        self.img["Jolt_of_light"] = pygame.image.load("Assets/Jolt_of_light.png")
+        self.img["Request_from_the_fire_God"] = pygame.image.load("Assets/Request_from_the_fire_God.png")
+        
+        
+
         
         
         

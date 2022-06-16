@@ -13,7 +13,13 @@ import pygame
 class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
-        from utiles import heal, teleport, cheat_hp, cheat_str,manaheal
+        """
+        the core class of the game, his arguments are awaible in all other files by importing theGame from utiles
+        :param hero: Hero isntance
+        :param level: integer, actual level
+        :param floor: Map isntance, the actual map
+        """
+        from utiles import heal, teleport, cheat_hp, cheat_str
         from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("mana_potion", "!", True, lambda creature, rv=False: manaheal(creature, 10))],
                         1: [Weapon("stick", "|", 10),Weapon("glock","g",isrange=True,bullet=Bullet())],
@@ -28,26 +34,19 @@ class Game():
                     3: [Creature("Ork", 60, strength=20),
                         Creature("Blob", 100)],
                     1: [Creature("Snake", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 2}])],
-                    5: [Creature("Statue",200,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
-                    8: [Creature("Stone Minotaur", 250, "D", strength=20, armor=20)],
-                    12: Creature("The_Abomination", 500, "F", 10, damagetype=["burning", {"time": 4, "damage": 3}])}
+                    5: [Creature("Statue",200,"I",strength=20, damagetype=["frozen", {"time":3,"damage":0}])],
+                    8: [Creature("Stone Minotaur", 250, "D", strength=30, armor=20)],
+                    12: [Creature("The_Abomination", 500, "F", strength=40, damagetype=["burning", {"time": 4, "damage": 5}])]}
+
         
         self._actions = { "z": lambda hero: self._floor.move(hero, Coord(0, -1)),
                         "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
                         "q": lambda hero: self._floor.move(hero, Coord(-1, 0)),
                         "d": lambda hero: self._floor.move(hero, Coord(1, 0)),
-                        "i": lambda hero: self.addMessage(hero.fullDescription()),
-                        "k": lambda hero: hero.sethp(0),
-                        " ": lambda hero: None,
-                        "u": lambda hero: hero.use(self.select(hero._inventory)),
                         "y": lambda hero: hero.removeInventory(self.select(hero._inventory)),
                         "a": lambda hero: hero.healSkill(),
                         "e": lambda hero: hero.damageSkill(),
-                        "r": lambda hero: hero.classSkill(),
-                        "b": lambda hero: cheat_hp(hero),
-                        "n": lambda hero: cheat_str(hero),
-                        "v": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randEquipment()),
-                        "c": lambda hero: self._floor.put(self._floor._rooms[0].randEmptyCoord(self._floor),self.randMonster()),}
+                        "r": lambda hero: hero.classSkill()}
         self.level_bonus = {3000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        6000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        9000: {"max_hp": 10, "_strength": 0, "armor": 0},
@@ -124,7 +123,7 @@ class Game():
         while self._hero.hp > 0:
  #           print(self._floor)
             self.ml.touches = self.touches
-            self.ml.animation()
+            self.ml.backgroundui()
             self.ml.realtime()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
