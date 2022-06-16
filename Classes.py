@@ -1,8 +1,10 @@
 import pygame
 from time import *
-    
-        
+
 class anim_total:
+    """
+    used to animate the game
+    """
     def __init__(self):
         self.hero_anim_nb = 10
         self.hero_anim_wk = 8

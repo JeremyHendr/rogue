@@ -12,15 +12,24 @@ class Room:
         return a.x>=self.c1.x and a.y>=self.c1.y and a.x<=self.c2.x and a.y<=self.c2.y
 
     def center(self):
+        """
+        :return: the coordinate of the center of the room
+        """
         return Coord(((self.c2.x+self.c1.x)//2),((self.c2.y+self.c1.y)//2))
 
     def intersect(self,other):
        return (other.c1 in self) or (Coord(other.c1.x+(other.c2.x-other.c1.x), other.c1.y) in self) or (other.c2 in self) or (Coord(other.c2.x-(other.c2.x-other.c1.x), other.c2.y) in self) or (self.c1 in other) or (Coord(self.c1.x+(self.c2.x-self.c1.x), self.c1.y) in other) or (self.c2 in other) or (Coord(self.c2.x-(self.c2.x-self.c1.x), self.c2.y) in other)
 
     def randCoord(self):
+        """
+        :return: a random coordinate inside of the room
+        """
         return Coord(random.randint(self.c1.x,self.c2.x),random.randint(self.c1.y,self.c2.y))
 
     def randEmptyCoord(self,map):
+        """
+        :return: a random empty coordinate inside of the room
+        """
         a = self.randCoord()
         while True:
             if (map.get(a) == map.ground and a != self.center()):
@@ -29,6 +38,10 @@ class Room:
         return a
 
     def decorate(self,map):
+        """
+        places a monster and an item on an empty coordinate in the room
+        :param map: Map instance
+        """
         from utiles import theGame
         hero_pos = map.pos(map._hero)
         c = self.randEmptyCoord(map)

@@ -8,8 +8,7 @@ from Map import Map
 from Creature import Creature 
 from Hero import Hero
 from PIL import Image
-#En clair, theGame().templist t'associes les cases de la map montrée à leur coordonnées
-#Et dans Map, il y a self.currentFoGMap qui te donne toutes les cases montrées
+
 class mainloop:
     inv = True
     carte = ""
@@ -32,7 +31,8 @@ class mainloop:
         self.finishingaxis = None
         self.touches = ""
 
-    def animation(self):  # la boucle principale qui reprint tout
+    def animation(self):
+        """displays all in the pygame window"""
         pygame.display.init()
         tc = self.touches
         self.screen = pygame.display.set_mode(self.screencoords)
@@ -51,6 +51,7 @@ class mainloop:
         pygame.display.update()
         
     def deathanimation(self):
+        """display when the hero dies"""
         t = time()
         while time()-t<=1:
             pygame.display.init()
@@ -62,6 +63,7 @@ class mainloop:
             self.ui()
         
     def realtime(self):
+        """function that enable realtime playing is mainly moving all the monsters and when the hero is attacking"""
         from utiles import theGame
         from Bullet import Bullet
         timer = self.timers[0]
@@ -97,6 +99,7 @@ class mainloop:
                     self.carte.get(pos).meet(self.carte._hero)
 
     def foreground(self):
+        """displays the bullets for the range weapons"""
         from utiles import theGame
         from SpecialCoord import SpecialCoord
         for bullet in theGame().bullet_list:
@@ -116,6 +119,7 @@ class mainloop:
 
 
     def ui(self):
+        """displays the user interface"""
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('test gui/GUI/Mouse pointer/Mpointer.png')
         cursor_rect = cursorsp.get_rect()
@@ -126,6 +130,7 @@ class mainloop:
     
     
     def minimap_ui(self):
+        """displays the minimap"""
         basex = self.screencoords[0]/5
         x, y = basex, self.screencoords[1]/8
         img = self.pictures["minimap"]
@@ -157,6 +162,7 @@ class mainloop:
             
         
     def background(self):
+        """displays the background, the hero, the monsters, the equipments"""
         from utiles import theGame
         # self.screen.set_colorkey([128,0,128]) # don't copy color [0,0,0] on screen
         imgsize = 64
@@ -192,6 +198,7 @@ class mainloop:
         self.finishingaxis = Coord(finishingx,y)
 
     def checking(self, i, x, y):
+        """verifying and adjusting all the monster animations"""
         from Chest import Chest
         img = self.pictures["sol"]
         img = pygame.transform.scale(img, (64, 64))
@@ -308,6 +315,7 @@ class mainloop:
                     
 
     def inventory_ui(self):
+        """displays the inventory"""
         x, y = self.screencoords[0]/2, self.screencoords[1]/8
         im = self.pictures["invplaceholder"]
         im = pygame.transform.scale(im, (64, 64))
@@ -329,7 +337,7 @@ class mainloop:
         self.weapon_ui(basex,y)
         
     def chestselect(self,l):
-        
+        """displays the popup window when the hero opens a chest"""
         font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
             self.screen = pygame.display.set_mode(self.screencoords)
@@ -374,6 +382,7 @@ class mainloop:
                             a+=1
     
     def weapon_ui(self,x,y):
+        """displays the equiped weapon slot"""
         im2 = self.pictures["invweapon"]
         im2 = pygame.transform.scale(im2, (64, 64))
         img = self.pictures[self.carte._hero.weapon.name]
@@ -382,6 +391,7 @@ class mainloop:
         self.screen.blit(img,(x+32*4,y))
         
     def health_bar(self):
+        """displays the health bar"""
         x, y = self.screencoords[0]/8, self.screencoords[1]/4
         BarreVie1 = pygame.Rect(x, y, 108, 105)
         BarreVie2 = pygame.Rect(x, y, 108, 105*(self.carte._hero.max_hp-self.carte._hero.hp)/self.carte._hero.max_hp)
@@ -394,6 +404,7 @@ class mainloop:
         self.screen.blit(pygame.transform.scale(self.pictures["orb6"], (110, 110)), (x, y))
         
     def mana_bar(self):
+        """displays the mana bar"""
         #im = self.pictures["manaplaceholder"]
         x,y = self.screencoords[0]/3,self.screencoords[1]/5
         im = self.pictures["manabg"]
@@ -407,6 +418,7 @@ class mainloop:
         self.screen.blit(im,(self.screencoords[0]/3,self.screencoords[1]/5))
         
     def exp_bar(self):
+        """displays the experience bar"""
         from utiles import theGame
         a = self.carte._hero.level
         b = 0
@@ -429,11 +441,13 @@ class mainloop:
         self.screen.blit(img,(self.screencoords[0]/3,self.screencoords[1]/6))
         
     def chat(self, ms):
+        """not used"""
         self.screen.blit(font.render(
             (str(ms)), 1, [255, 255, 255]),  (0, 0))
         pygame.display.update()
 
     def action(self, pressed):
+        """looking for the events happening on the keayboard and the mouse"""
         # print(pressed)
         from utiles import theGame
         if 27 in pressed:

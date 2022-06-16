@@ -3,6 +3,10 @@ import math,copy
 from time import *
 class Creature(Element):
     def __init__(self, name, hp, abr=False, strength=10, armor=0, armorpene=0.0, damagetype=None):
+        """
+        :param armorpene: float (0-1), armor penetration in percentage
+        :param damagetype: dictionnary, specifies the damage type done by this creature
+        """
         Element.__init__(self, name, abr)
         self.hp = hp
         self.armor = armor
@@ -20,6 +24,11 @@ class Creature(Element):
         return s+"("+str(self.hp)+")"
 
     def meet(self,other):
+        """
+        other is attacking self
+        :param other: Creature isntance
+        :return: True if self is dead, False else
+        """
         from utiles import theGame
         from Hero import Hero
         if isinstance(other,Hero):
@@ -46,6 +55,9 @@ class Creature(Element):
         return False
 
     def updateState(self):
+        """
+        update all the effects applied on the hero
+        """
         statetodelete = []
         for dic in self.state.items():
             print(dic)

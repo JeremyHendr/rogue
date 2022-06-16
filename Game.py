@@ -13,6 +13,12 @@ import pygame
 class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
+        """
+        the core class of the game, his arguments are awaible in all other files by importing theGame from utiles
+        :param hero: Hero isntance
+        :param level: integer, actual level
+        :param floor: Map isntance, the actual map
+        """
         from utiles import heal, teleport, cheat_hp, cheat_str
         from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],

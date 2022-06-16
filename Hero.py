@@ -35,15 +35,15 @@ class Hero(Creature):
         self.hp = b
 
     def take(self,elem):
+        """
+        :param elem: Element instance
+        :return: True if the element has been taken, False else
+        """
         from Equipment import Equipment
         from utiles import theGame
         if not isinstance(elem,Equipment):
             raise TypeError("not an Equipement",elem)
         name_inventory = [x.name for x in self._inventory]
-        # print(elem,self._inventory,self.weapon,self.protection)
-        # print(name_inventory,elem.name)
-        # print("all",elem.unique or (elem.name not in name_inventory and elem.name != self.weapon.name and elem.name != self.protection.name))
-        # print(elem.unique,elem.name not in name_inventory,elem.name != self.weapon.name, elem.name != self.protection.name)
         if elem.name == "gold":
             self.gold += 20
             return True
@@ -77,6 +77,10 @@ class Hero(Creature):
         return a
 
     def use(self,item):
+        """
+        use or equip an Equipement
+        :param item: Equipement instance
+        """
         from Weapon import Weapon
         from Armor import Armor
         from Equipment import Equipment
@@ -92,6 +96,11 @@ class Hero(Creature):
             item.use(self)
 
     def removeInventory(self,item):
+        """
+        remove the item from the inventory
+        :param item: Equipement instance
+        :return: None if the item hasnt been removed
+        """
         from utiles import theGame
         if item == None:
             return None
@@ -106,23 +115,26 @@ class Hero(Creature):
         self.hp = self.max_hp
 
     def updateXp(self,incr):
+        """
+        add xp to the hero when he kills a monster
+        :param incr: integer, how many exp should be added
+        """
         from utiles import theGame
-        # print("-> In update XP  enter hero",self.xp,self.level)
         self.xp += incr
         list_key = [key for key in theGame().level_bonus.keys()]
-        # print(self.level < len(theGame().level_bonus.keys()))
         if self.level < len(theGame().level_bonus.keys()) and self.xp >= list_key[self.level]:
             for item in theGame().level_bonus[list_key[self.level]].items():
-                # print("attr",item[0],self.__getattribute__(item[0]),item[1])
                 self.__setattr__(item[0],self.__getattribute__(item[0])+item[1])
-                # print(item[1],"added to",self.__getattribute__(item[0]))
             self.updateLvl(1)
             theGame().addMessage("The hero gained " + str(incr) + " xp and gained one level")
         else:
             theGame().addMessage("The hero gained " + str(incr) + " xp")
-        # print("exit hero", self.xp, self.level)
 
     def updateMana(self,incr):
+        """
+        add or remove mana to the hero when he kills a monster or use a skill
+        :param incr: integer, how many mana should be added or removed
+        """
         from utiles import theGame
         # print("-> In updateMana  enter hero", self.mana,"/",self.max_mana)
         if self.mana+incr <= self.max_mana:
@@ -133,6 +145,7 @@ class Hero(Creature):
                 theGame().addMessage("The hero used " + str(incr) + " mana he has now"+str(self.mana)+"/"+str(self.max_mana))
 
     def healSkill(self):
+        """first skill from the Hero"""
         from utiles import theGame,heal
         if self.mana >= 10:
             self.mana -= 10
@@ -141,6 +154,7 @@ class Hero(Creature):
                 theGame()._floor.moveAllMonsters()
 
     def damageSkill(self):
+        """seconde skill from the Hero"""
         from utiles import theGame
         if self.mana >= 10:
             self.mana -= 10
@@ -150,6 +164,7 @@ class Hero(Creature):
                     monster[0].meet(Creature("Magic",40,"~"))
 
     def classSkill(self):
+        """Special skill from the Hero"""
         from utiles import theGame
         if self.mana >= 20:
             self.mana -= 20

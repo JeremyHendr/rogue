@@ -1,13 +1,13 @@
 from utiles import theGame
-import random
-import copy
-import math
-import pygame
-from time import *
+# import random
+# import copy
+# import math
+# import pygame
+# from time import *
 from Classes import *
-from PIL import Image
+# from PIL import Image
 # random.seed(69)
-random.seed(6)
+# seed 6 make spawn a range weapon nearby
+# random.seed(6)
 pygame.init()
-
 theGame().play()

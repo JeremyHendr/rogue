@@ -5,6 +5,7 @@ class images:
         self.buildup()
         
     def buildup(self):
+        """associate an image to an object on the map"""
         self.img["heal potion"] = pygame.image.load("64/potionRed.png")
         self.img["gold"] = pygame.image.load("64/coin.png")
         self.img["!"] = pygame.image.load("Silmar/items/potion.gif")

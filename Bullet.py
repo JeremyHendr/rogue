@@ -2,9 +2,21 @@ from Coord import Coord
 from SpecialCoord import SpecialCoord
 
 class Bullet:
+    """
+    The range weapons are shooting bullet instances
+    """
     screen_refresh_rate = 30
     id = 0
     def __init__(self,pos=SpecialCoord(0,0),shooter=None,destination=SpecialCoord(1,1),speed=5,damage=10,armorpene=0,damagetype=None):
+        """
+        :param pos: SpecialCoord instance, actual position of the bullet
+        :param shooter: Creature instance, the shooter
+        :param destination: SpecialCoord instance, the position where the user has clicked
+        :param speed: integer, the speed of the bullet in blocks/second
+        :param damage: interger, the damage dealed by the bullet
+        :param armorpene: float (0-1), percentege of armorpenetration of the bullet
+        :param damagetype: dictionnary, spcifies if the bullet applies fire, ice or poison
+        """
         if isinstance(pos,Coord):
             self.pos = SpecialCoord(pos.x,pos.y,32,32)
         else:
@@ -12,15 +24,9 @@ class Bullet:
         self.destination = destination
         self.speed = speed
         dist = self.pos.distance(self.destination)
-        # print("dist",dist)
         timetodest = dist/self.speed
-        # print("time",timetodest)
         step = (self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1))
-        # print("diff:",self.destination,"-",self.pos,"=",self.destination-self.pos)
-        # print("step",step,self.destination-self.pos,((timetodest*self.screen_refresh_rate)**(-1)))
         self.step = step
-        # print("step:",self.destination-self.pos,timetodest*self.screen_refresh_rate,((timetodest*self.screen_refresh_rate)**(-1)),(self.destination-self.pos)*((timetodest*self.screen_refresh_rate)**(-1)))
-        # print("created bullet with:",self.pos,self.destination,self.step," dist:",dist," time:",timetodest)
         self.damage = damage
         self.shooter = shooter
         self.armor_pene = armorpene
@@ -33,6 +39,10 @@ class Bullet:
         return "<Bullet:"+str(self.ide)+" pos:"+str(self.pos)+" dest:"+str(self.destination)+" speed:"+str(self.speed)+" step:"+str(self.step)+">"
 
     def updatePos(self):
+        """
+        Update the position of the bullet every frame (30 times a second)
+        remove the bullet if it hits a wall or applie damage if it hits an other crature than the hero
+        """
         from utiles import theGame
         from Creature import Creature
         from Hero import Hero
@@ -50,7 +60,3 @@ class Bullet:
         if obj in Map.walllist or obj == Map.empty:
             theGame().bullet_list.pop(theGame().bullet_list.index(self))
             print("LOG",theGame().log_update_pos_bullet[self])
-
-        return obj,self.pos,obj==Map.empty,Map.empty
-# b = Bullet(SpecialCoord(0,0),SpecialCoord(5,5),2)
-# print(b)

@@ -4,6 +4,7 @@ from images import images
 
 from Hero import Hero
 def MenuZero():
+    """displays the Home/start page"""
     pygame.display.init()
     pictures = images().img
     sx,sy = pygame.display.Info().current_w , pygame.display.Info().current_h

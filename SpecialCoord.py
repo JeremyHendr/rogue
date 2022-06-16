@@ -1,6 +1,8 @@
 from Coord import Coord
 import math
 class SpecialCoord():
+    """this class is a subtitute to the Coord class,
+    only used for the bullet it allows to have coords between to coord so that the ullet palcement is indepant from the map matrix"""
     imgsize = 64
     def __init__(self,x,y,decx=0,decy=0):
         self.x = x
@@ -54,6 +56,8 @@ class SpecialCoord():
         return SpecialCoord(self.x*s,self.y*s,self.decx*s,self.decy*s).verifCoord()
 
     def verifCoord(self):
+        """make the coordinate are in the right form, decx and decy shall not go over 64,
+        if that happens we increment x or y by decx//64 or decy//64"""
         x_int_part = int(self.x)
         x_dec_part = self.x-x_int_part
         x = x_int_part
@@ -72,7 +76,6 @@ class SpecialCoord():
 
         return SpecialCoord(x,y,int(round(decx)),int(round(decy)))
 
-
     def direction(self):
         pass
 
@@ -90,6 +93,6 @@ class SpecialCoord():
 # 2.1213203435596424
 
 #<7,28 ; 16,15> <8,32 ; 18,32>
-a = SpecialCoord(7,16,-28,45)
-b = SpecialCoord(8,18,32,32)
-print(a+b)
+# a = SpecialCoord(7,16,-28,45)
+# b = SpecialCoord(8,18,32,32)
+# print(a+b)
