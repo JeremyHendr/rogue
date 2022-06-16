@@ -13,25 +13,24 @@ import pygame
 class Game():
 
     def __init__(self,hero=Hero(), level=1, floor=None):
-        from utiles import heal, teleport, cheat_hp, cheat_str
+        from utiles import heal, teleport, cheat_hp, cheat_str,manaheal
         from Bullet import Bullet
-        self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature))],
+        self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("mana_potion", "!", True, lambda creature, rv=False: manaheal(creature, 10))],
                         1: [Weapon("stick", "|", 10),Weapon("glock","g",isrange=True,bullet=Bullet())],
                         2: [Weapon("axe", "a", 20)],
-                        3: [Equipment("portoloin", "p", False, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("armor", "c", 5)],
+                        3: [Equipment("telepotion", "!", True, lambda creature, rv=False: teleport(creature)),Weapon("sword", "s", 40), Armor("armor", "c", 5)],
                         5: [Weapon("hammer","m",15,armorpene=0.5),Weapon("frozone","f",15,damagetype=["frozen", {"time": 3, "damage": 0}])],
                         10: [Weapon("katana", "k", 60), Armor("heavy_armor", "h", 10)]}
         
         self.monsters = {0: [Creature("Goblin", 40), 
                              Creature("Rat",30,"R"),
                              Creature("Bat", 20, "W")],
-                    2: [Creature("Ork", 60, strength=20),
+                    3: [Creature("Ork", 60, strength=20),
                         Creature("Blob", 100)],
                     1: [Creature("Snake", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 2}])],
-                    4: [Creature("Ice Golem",150,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
-                    8: [Creature("Stone Minotaur", 200, "D", strength=20, armor=20),
-                        Creature("Fire Dragon", 200, "F", 10, damagetype=["burning", {"time": 5, "damage": 10}])],
-                    50: [Creature("Zeus", 1000, strength=50)]}
+                    5: [Creature("Statue",200,"I",2, damagetype=["frozen", {"time":3,"damage":0}])],
+                    8: [Creature("Stone Minotaur", 250, "D", strength=20, armor=20)],
+                    12: Creature("The_Abomination", 500, "F", 10, damagetype=["burning", {"time": 4, "damage": 3}])}
         
         self._actions = { "z": lambda hero: self._floor.move(hero, Coord(0, -1)),
                         "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
@@ -123,7 +122,7 @@ class Game():
         self.addMessage("test")
         a = True
         while self._hero.hp > 0:
-            #print(self._floor)
+ #           print(self._floor)
             self.ml.touches = self.touches
             self.ml.animation()
             self.ml.realtime()
