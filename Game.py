@@ -34,7 +34,7 @@ class Game():
                     4: [Creature("Ork", 60, strength=20),
                         Creature("Blob", 100)],
                     2: [Creature("Snake", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 2}])],
-                    8: [Creature("Statue",200,"I",strength=15, damagetype=["frozen", {"time":3,"damage":0}])],
+                    8: [Creature("Statue",200,"I",strength=2, damagetype=["frozen", {"time":3,"damage":0}])],
                     12: [Creature("Stone Minotaur", 250, "D", strength=20, armor=20)],
                     16: [Creature("The_Abomination", 500, "F", strength=30, damagetype=["burning", {"time": 4, "damage": 5}])]}
 
@@ -121,7 +121,6 @@ class Game():
         self.addMessage("test")
         a = True
         while self._hero.hp > 0:
- #           print(self._floor)
             self.ml.touches = self.touches
             self.ml.backgroundui()
             self.ml.realtime()
@@ -135,7 +134,6 @@ class Game():
                     print("pos = ", position_souris)
                 if event.type == pygame.KEYDOWN:
                     self.touches.pressed[event.key] = True
-            # print(self._message)
             self.readMessages()
         self.ml.deathanimation()
         pygame.quit()

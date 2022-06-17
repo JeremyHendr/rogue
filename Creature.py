@@ -52,7 +52,8 @@ class Creature(Element):
                 theGame()._hero.updateXp(self.xp_value)
                 theGame()._hero.updateMana(int(math.log(self.xp_value/100)*2))
             if other.name not in maginames:
-                del theGame()._floor._elem[self]
+                if self in theGame()._floor._elem.keys():
+                    del theGame()._floor._elem[self]
             return True
         return False
 

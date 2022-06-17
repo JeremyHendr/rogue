@@ -193,8 +193,9 @@ class mainloop:
                         img = pygame.transform.scale(img, (64, 64))
                         self.screen.blit(img, (x, y))
                 c = self.carte.currentFoGMap[a]
+                theGame().templist.append((Coord(c[1], c[0]), Coord(x, y)))
                 x += imgsize
-                theGame().templist.append((Coord(c[1],c[0]),Coord(x,y)))
+
 
             finishingx = x
             x = basex
@@ -428,9 +429,20 @@ class mainloop:
         text=font.render("R",1,[255,255,255])
         self.screen.blit(text,  (x+32,y+72))
         
-        
+    def price(self,e):
+        from utiles import theGame
+        """
+        return the price of the element e, supposed to be in self.content
+        price based on rarity +1 *10
+        """
+        for l in theGame().equipments.items():
+            for obj in l[1]:
+                if type(e)==type(obj):
+                    return (l[0]+1)*10
+
     def chestselect(self,l): #popup quand on ouvre un coffre
         """displays the popup window when the hero opens a chest"""
+        from utiles import theGame
         font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
             self.screen = pygame.display.set_mode(self.screencoords)
@@ -443,8 +455,16 @@ class mainloop:
             img1 = pygame.transform.scale(img1, (420, 600))
             self.screen.blit(img1,(x,y))
             x, y = self.screencoords[0]/2-64, self.screencoords[1]/2
-            text=font.render("Un coffre! Il contient: ",1,[255,255,255])
-            self.screen.blit(text,  (x-80,y-200))
+            if len(l) == 1:
+                text = font.render("Un coffre! Il contient: ", 1, [255, 255, 255])
+                self.screen.blit(text, (x - 80, y - 200))
+            else:
+                text = font.render("Un marchand "+"Les prix sont: ", 1, [255, 255, 255])
+                self.screen.blit(text, (x - 80, y - 200))
+                text = font.render(" ".join([x.name + ": " + str(self.price(x)) for x in l]), 1, [255, 255, 255])
+                self.screen.blit(text, (x - 80, y - 180))
+                text = font.render("tu as: "+str(theGame()._hero.gold)+" or", 1, [255, 255, 255])
+                self.screen.blit(text, (x - 80, y - 160))
             basex = x
             
             for i in range(2):
