@@ -13,15 +13,13 @@ class mainloop:
     inv = True
     carte = ""
     #font = pygame.font.SysFont("Arial", 30)
-    def __init__(self, carte):
+    def __init__(self, carte): #constructeur de mainloop
         mainloop.carte = carte
-        self.page_actuelle = 1  # 1 étant le ² principal, 0 le menu et 2 l'inventaire
         self.nb_fps = 30
         self.nbtimers = 3  # on aura besoin de bcp de timers
         self.timers = [time() for i in range(self.nbtimers)]
-        
         self.screencoords = (pygame.display.Info().current_w,
-                             pygame.display.Info().current_h)
+                             pygame.display.Info().current_h) #la taille de l'écran
         self.imgsetter = images()
         self.pictures = self.imgsetter.img
         self.anim_lib = anim_total()
@@ -29,24 +27,6 @@ class mainloop:
         self.startingaxis = None
         self.finishingaxis = None
         self.touches = ""
-
-    def animation(self):  # la boucle principale qui reprint tout
-        pygame.display.init()
-        tc = self.touches
-        self.screen = pygame.display.set_mode(self.screencoords)
-        #self.screen.blit(self.bg1test, (0, 0))
-        # self.chat(ms)
-        self.background()
-        self.foreground()
-        self.action(tc.pressed)
-        self.inventory_ui()
-        self.health_bar()
-        self.mana_bar()
-        self.exp_bar()
-        self.minimap_ui()
-        self.ui()
-        
-        pygame.display.update()
         
     def deathanimation(self):
         """display when the hero dies"""
@@ -58,10 +38,10 @@ class mainloop:
             self.health_bar()
             self.mana_bar()
             self.exp_bar()
-            self.ui()
+            self.mouseui()
         
     def realtime(self):
-        """function that enable realtime playing is mainly moving all the monsters and when the hero is attacking"""
+        #fonction gérant la partie 'temps réel' du jeu, i-e les mouvements des monstres, le mouvement des projectiles et l'attaque du héros 
         from utiles import theGame
         from Bullet import Bullet
         timer = self.timers[0]
@@ -71,8 +51,6 @@ class mainloop:
             for monster in self.carte._elem:
                 if isinstance(monster, Creature):
                     monster.updateState()
-
-
         if self.carte._hero.game_state == "Attack" and time()-self.timers[1] > 1.05:
             self.timers[1] = time()
             if self.carte._hero.weapon.isrange:
@@ -88,21 +66,19 @@ class mainloop:
                 hx,hy = self.screencoords[0]/2,self.screencoords[1]/2
                 if mx>hx-64 and mx<hx+64:
                     if my<hy:
-                        dire = Coord(0,1)
-                    else:
                         dire = Coord(0,-1)
+                    else:
+                        dire = Coord(0,1)
                 else:
                     if mx>hx:
                         dire = Coord(1,0)
                     else:
                         dire = Coord(-1,0)
-                        
-                if pygame.mouse.get_pos()[0]<(self.screencoords[1]/2)+30 and pygame.mouse.get_pos()[0]>(self.screencoords[1]/2)-30 and pygame.mouse.get_pos()[1]>(self.screencoords[1]/2):
-                    pos = self.carte.pos(self.carte._hero) + dire
-                    self.carte._hero.attackdir = "N"
-                else:
-                    pos = self.carte.pos(self.carte._hero) + dire
-                    self.carte._hero.attackdir = None
+                    
+                pos = self.carte.pos(self.carte._hero) + dire
+                print(pos)
+                print(self.carte.pos(self.carte._hero))
+                self.carte._hero.attackdir = None
                 if isinstance(self.carte.get(pos), Creature):
                     self.carte.get(pos).meet(self.carte._hero)
 
@@ -119,14 +95,14 @@ class mainloop:
                     x = int(c.x + c.decx)
                     y = int(c.y + c.decy)
                     # print("couple", c, x, y) # couple, c,
-                    BarreVie1 = pygame.Rect(x, y, 20, 20)
-                    pygame.draw.rect(self.screen, (255, 0, 0), BarreVie1)
+                    BarreVie1 = pygame.Rect(x, y, 15, 15)
+                    pygame.draw.rect(self.screen, (0, 0, 0), BarreVie1)
 
                     #self.screen.blit(self.pictures["stick"], (x, y))
                     break
-    def backgroundui(self):
+    def backgroundui(self): 
+        #La fonction appelant quasiment toutes les méthodes de mainloop
         pygame.display.init()
-        
         self.screen = pygame.display.set_mode(self.screencoords)
         tc = self.touches
         sx,sy = self.screencoords[0],self.screencoords[1]
@@ -147,10 +123,9 @@ class mainloop:
         self.mana_bar()
         self.exp_bar()
         self.minimap_ui()
-        self.ui()
+        self.mouseui()
 
-    def ui(self):
-        """displays the user interface"""
+    def mouseui(self): #remplace le curseur basique par un plus fantaisiste
         pygame.mouse.set_visible(False)
         cursorsp = pygame.image.load('Assets/Mpointer.png')
         cursor_rect = cursorsp.get_rect()
@@ -160,8 +135,9 @@ class mainloop:
         pygame.display.update()
     
     
-    def minimap_ui(self):
+    def minimap_ui(self): #affiche une minimap dans le coin haut gauche de l'écran
         """displays the minimap"""
+        basex = 50
         x, y = basex, self.screencoords[1]/8
         img = self.pictures["minimap"]
         img = pygame.transform.scale(img, (270, 190))
@@ -190,8 +166,7 @@ class mainloop:
             y += pixelsize
             
         
-    def background(self):
-        """displays the background, the hero, the monsters, the equipments"""
+    def background(self):#affiche la partie actuelle (au milieu de l'écran)
         from utiles import theGame
         # self.screen.set_colorkey([128,0,128]) # don't copy color [0,0,0] on screen
         imgsize = 64
@@ -226,7 +201,7 @@ class mainloop:
             y += imgsize
         self.finishingaxis = Coord(finishingx,y)
 
-    def checking(self, i, x, y):
+    def checking(self, i, x, y): #méthode d'aide à background, lui affiche l'image associée à la créature envoyée
         """verifying and adjusting all the monster animations"""
         from Chest import Chest
         img = self.pictures["sol"]
@@ -253,16 +228,19 @@ class mainloop:
                         i.attackdir = "N"
                     else:
                         i.attackdir = "S"
-                    print(i.attackdir)
                     im = self.anim_lib.anim_hero(i.game_state,i.attackdir) 
                     img, i.game_state = im[0], im[1]
                     
                 else:
-                    i.attackdir = None
-                    im = self.anim_lib.anim_hero(i.game_state,i.walkingcoord)
-                    img, i.game_state = im[0], im[1]
                     direc = (pygame.mouse.get_pos()[0] < self.screencoords[0]/2)
-                    img = pygame.transform.flip(img, direc, 0)
+                    if self.carte._hero.weapon.isrange:
+                        im = self.pictures["AttackR"]
+                        img = pygame.transform.flip(im, direc, 0)
+                    else:
+                        i.attackdir = None
+                        im = self.anim_lib.anim_hero(i.game_state,None)
+                        img, i.game_state = im[0], im[1]
+                        img = pygame.transform.flip(img, direc, 0)
             else:
                 im = self.anim_lib.anim_hero(i.game_state,i.walkingcoord)
                 img, i.game_state = im[0], im[1]
@@ -384,7 +362,7 @@ class mainloop:
             self.screen.blit(img, (x, y))
 
 
-        if isinstance(i,Creature) or isinstance(i,Hero):
+        if isinstance(i,Creature) or isinstance(i,Hero): #affiche les effets spéciaux (poison,gel,soin,decay)
             dellist = []
             for st in i.state:
                 # print(st)
@@ -404,7 +382,7 @@ class mainloop:
                     
 
 
-    def inventory_ui(self):
+    def inventory_ui(self): #affiche l'inventaire et ce qui va avec
         """displays the inventory"""
         x, y = self.screencoords[0]-264, self.screencoords[1]*(1/3)
         im = self.pictures["invplaceholder"]
@@ -426,32 +404,32 @@ class mainloop:
             y+=imgsize
         self.weapon_ui(basex,y)
         
-    def spell_ui(self):
+    def spell_ui(self): #affiche les sorts
         x, y = self.screencoords[0]-312, self.screencoords[1]*(2/3)
         font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         
         im = self.pictures["Impending_Terror"]
         im = pygame.transform.scale(im, (64, 64))
         self.screen.blit(im, (x, y))
-        text=font.render("e",1,[255,255,255])
+        text=font.render("E",1,[255,255,255])
         self.screen.blit(text,  (x+32,y+72))
         
         x+=88
         im = self.pictures["Jolt_of_light"]
         im = pygame.transform.scale(im, (64, 64))
         self.screen.blit(im, (x, y))
-        text=font.render("a",1,[255,255,255])
+        text=font.render("A",1,[255,255,255])
         self.screen.blit(text,  (x+32,y+72))
         
         x+=88
         im = self.pictures["Request_from_the_fire_God"]
         im = pygame.transform.scale(im, (64, 64))
         self.screen.blit(im, (x, y))
-        text=font.render("r",1,[255,255,255])
+        text=font.render("R",1,[255,255,255])
         self.screen.blit(text,  (x+32,y+72))
         
         
-    def chestselect(self,l):
+    def chestselect(self,l): #popup quand on ouvre un coffre
         """displays the popup window when the hero opens a chest"""
         font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
         while True:
@@ -480,9 +458,9 @@ class mainloop:
                     x+=imgsize
                 x = basex
                 y+=imgsize
-            self.ui()
+            self.mouseui()
         
-            
+                
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -496,8 +474,8 @@ class mainloop:
                         else:
                             a+=1
     
-    def weapon_ui(self,x,y):
-        """displays the equiped weapon slot"""
+    def weapon_ui(self,x,y): 
+        """displays the equiped weapon,armor,droporuse slot"""
         im2 = self.pictures["invweapon"]
         im2 = pygame.transform.scale(im2, (64, 64))
         img = self.pictures[self.carte._hero.weapon.name]
@@ -510,6 +488,22 @@ class mainloop:
         img = pygame.transform.scale(img, (64, 64))
         self.screen.blit(im2,(x+32*2,y))
         self.screen.blit(img,(x+32*2,y))
+        im2 = self.pictures["invonoff"]
+        im2 = pygame.transform.scale(im2, (64, 64))
+        self.screen.blit(im2,(x,y))
+        if mainloop.inv:
+            font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
+            text=font.render("Use",1,[255,255,255])
+            self.screen.blit(text,  (x+5,y+32))
+        else:
+            font=pygame.font.SysFont("sitkasmallsitkatextsitkasubheadingsitkaheadingsitkadisplaysitkabanner", 30)
+            text=font.render("Drop",1,[255,255,255])
+            self.screen.blit(text,  (x+5,y+32))
+        text=font.render("Y",1,[255,255,255])
+        self.screen.blit(text,  (x+25,y+64))
+        
+        
+        
         
     def health_bar(self):
         """displays the health bar"""
@@ -560,9 +554,10 @@ class mainloop:
         im.save("currentxp.png")
         img = pygame.image.load("currentxp.png")
         self.screen.blit(img,(x,y))
+    
 
     def action(self, pressed):
-        """looking for the events happening on the keayboard and the mouse"""
+        """looking for the events happening on the keyboard and the mouse"""
         # print(pressed)
         from utiles import theGame
         if 27 in pressed:
@@ -599,15 +594,12 @@ class mainloop:
             theGame()._actions["d"](self.carte._hero)
             # self.carte.moveAllMonsters()
             pressed[100] = False
-                
-        if 98 in pressed and pressed[98]:
-            theGame()._actions["b"](self.carte._hero)
+            
+        if 121 in pressed and pressed[121]:
+            theGame()._actions["y"](self.carte._hero)
             # self.carte.moveAllMonsters()
-            pressed[98] = False
-        if 110 in pressed and pressed[110]:
-            theGame()._actions["n"](self.carte._hero)
-            # self.carte.moveAllMonsters()
-            pressed[110] = False
+            pressed[121] = False
+
 
         if "click" in pressed and pressed["click"] != False:
             self.carte._hero.game_state = "Attack"
@@ -632,9 +624,18 @@ class mainloop:
             # self.carte.moveAllMonsters()
             pressed[114] = False
 
-        if mainloop.inv:
-            sacado = self.carte._hero._inventory
-            for i in range(len(sacado)):
-                if 49+i in pressed and pressed[49+i]:
+
+        sacado = self.carte._hero._inventory
+        todelist = []
+        for i in range(len(sacado)):
+            if 49+i in pressed and pressed[49+i]:
+                if mainloop.inv:
                     self.carte._hero.use(sacado[i])
-                    pressed[49+i] = False
+                else:
+                    todelist.append(self.carte._hero._inventory[i])
+                pressed[49+i] = False
+        for i in todelist:
+            if i in self.carte._hero._inventory:
+                self.carte._hero._inventory.pop(self.carte._hero._inventory.index(i))
+def intervert():
+        mainloop.inv = not mainloop.inv

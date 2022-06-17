@@ -2,14 +2,12 @@ import pygame
 from time import *
 
 class anim_total:
-    used to animate the game
+#    used to animate the game
     def __init__(self):
         self.hero_anim_nb = 10
         self.hero_anim_wk = 8
         self.hero_anim_time,self.hero_anim_val = time() , "Idle"
 
-
-        
         self.bat_last_state = "Idle"
         self.bat_action = "Live"
         self.bat_anim_nb1 = 30

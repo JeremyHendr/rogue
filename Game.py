@@ -7,7 +7,7 @@ from Hero import Hero
 from Classes import *
 import random,copy,math
 from touches import touches
-from mainloop import mainloop
+from mainloop import *
 from MainMenu import MenuZero
 import pygame
 class Game():
@@ -19,7 +19,7 @@ class Game():
         :param level: integer, actual level
         :param floor: Map isntance, the actual map
         """
-        from utiles import heal, teleport, cheat_hp, cheat_str
+        from utiles import heal, teleport, cheat_hp, cheat_str,manaheal
         from Bullet import Bullet
         self.equipments = {0: [Equipment("gold", "o"),Equipment("heal potion", "!", True, lambda creature, rv=False: heal(creature, 30)),Equipment("mana_potion", "!", True, lambda creature, rv=False: manaheal(creature, 10))],
                         1: [Weapon("stick", "|", 10),Weapon("glock","g",isrange=True,bullet=Bullet())],
@@ -31,29 +31,29 @@ class Game():
         self.monsters = {0: [Creature("Goblin", 40), 
                              Creature("Rat",30,"R"),
                              Creature("Bat", 20, "W")],
-                    3: [Creature("Ork", 60, strength=20),
+                    4: [Creature("Ork", 60, strength=20),
                         Creature("Blob", 100)],
-                    1: [Creature("Snake", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 2}])],
-                    5: [Creature("Statue",200,"I",strength=20, damagetype=["frozen", {"time":3,"damage":0}])],
-                    8: [Creature("Stone Minotaur", 250, "D", strength=30, armor=20)],
-                    12: [Creature("The_Abomination", 500, "F", strength=40, damagetype=["burning", {"time": 4, "damage": 5}])]}
+                    2: [Creature("Snake", 20, "S", 10, damagetype=["poisoned", {"time": 3, "damage": 2}])],
+                    8: [Creature("Statue",200,"I",strength=15, damagetype=["frozen", {"time":3,"damage":0}])],
+                    12: [Creature("Stone Minotaur", 250, "D", strength=20, armor=20)],
+                    16: [Creature("The_Abomination", 500, "F", strength=30, damagetype=["burning", {"time": 4, "damage": 5}])]}
 
         
         self._actions = { "z": lambda hero: self._floor.move(hero, Coord(0, -1)),
                         "s": lambda hero: self._floor.move(hero, Coord(0, 1)),
                         "q": lambda hero: self._floor.move(hero, Coord(-1, 0)),
                         "d": lambda hero: self._floor.move(hero, Coord(1, 0)),
-                        "y": lambda hero: hero.removeInventory(self.select(hero._inventory)),
+                        "y": lambda hero: intervert(),
                         "a": lambda hero: hero.healSkill(),
                         "e": lambda hero: hero.damageSkill(),
                         "r": lambda hero: hero.classSkill()}
-        self.level_bonus = {3000: {"max_hp": 10, "_strength": 0, "armor": 0},
+        self.level_bonus = {1000: {"max_hp": 10, "_strength": 0, "armor": 0},
+                       3000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        6000: {"max_hp": 10, "_strength": 0, "armor": 0},
                        9000: {"max_hp": 10, "_strength": 0, "armor": 0},
-                       15000: {"max_hp": 10, "_strength": 0, "armor": 0},
-                       30000: {"max_hp": 20, "_strength": 5, "armor": 0},
-                       50000: {"max_hp": 20, "_strength": 5, "armor": 5},
-                       80000: {"max_hp": 20, "_strength": 10, "armor": 5}}
+                       15000: {"max_hp": 20, "_strength": 5, "armor": 0},
+                       30000: {"max_hp": 20, "_strength": 5, "armor": 5},
+                       50000: {"max_hp": 20, "_strength": 10, "armor": 5}}
 
         self._hero = hero
         self._level = level

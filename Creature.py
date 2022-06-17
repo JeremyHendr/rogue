@@ -48,7 +48,7 @@ class Creature(Element):
         if self.hp <= 0:
             # print("     dead",self)
             self.game_state = "Death"
-            if isinstance(other, Hero) or other.name in maginames:
+            if isinstance(other, Hero) or other.name in maginames and not isinstance(self,Hero):
                 theGame()._hero.updateXp(self.xp_value)
                 theGame()._hero.updateMana(int(math.log(self.xp_value/100)*2))
             if other.name not in maginames:

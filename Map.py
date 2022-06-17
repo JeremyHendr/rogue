@@ -359,13 +359,12 @@ class Map:
         """moves all the monsters on the map if they are at less than 6 block away"""
         from Creature import Creature
         global rep
-
-        for obj in self._elem:
-            if isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6 and self.pos(obj) not in self.to_delete_list:
+        temp = self._elem.copy()
+        for obj in temp:
+            if obj in self._elem and self.pos(obj) not in self.to_delete_list and isinstance(obj,Creature) and obj!=self._hero and self._elem[obj].distance(self._elem[self._hero])<=6:
                 self.move(obj, self._elem[obj].direction(self._elem[self._hero]))
         # print("todellist",self.to_delete_list)
         for c in self.to_delete_list:
-            print("deleted")
             self.rm(c)
             self.to_delete_list.pop(self.to_delete_list.index(c))
             

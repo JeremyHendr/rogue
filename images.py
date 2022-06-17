@@ -41,6 +41,7 @@ class images:
         self.img["orb8"] = pygame.image.load("Assets/Orb/itsmars_scroll_lip.png")
         self.img["invplaceholder"] = pygame.image.load("Assets/Inv sprites/0.png")
         self.img["invweapon"] = pygame.image.load("Assets/Inv sprites/21.png")
+        self.img["invonoff"] = pygame.image.load("Assets/Inv sprites/56.png")
         self.img["invarmor"] = pygame.image.load("Assets/Inv sprites/39.png")
         self.img["manabg"] = pygame.image.load("Assets/Bar1.png")
         self.img["gamebg"] = pygame.image.load("Assets/background.png")
@@ -65,7 +66,7 @@ class images:
         
         self.img["TitleScreen"] = pygame.image.load("Assets/UI/TitleScreen.png")
         self.img["frozen"] = pygame.image.load("Assets/Particles/Ice/Ice.png")
-        self.img["AttackN"] = pygame.image.load("Assets/Hero.sprites/Attack/AttackN.png")
+        self.img["AttackR"] = pygame.image.load("Assets/Hero.sprites/Attack/AttackR.png")
         
         self.img["Impending_Terror"] = pygame.image.load("Assets/Impending_Terror.png")
         self.img["Jolt_of_light"] = pygame.image.load("Assets/Jolt_of_light.png")

@@ -59,10 +59,10 @@ def MenuZero():
                             print("Not Yet Implemented")
                         elif my > ye and my < ye + imgsizey:
                             pygame.quit() 
-        ui(screen)
+        mouseui(screen)
         pygame.display.update()
         
-def ui(screen):
+def mouseui(screen):
     pygame.mouse.set_visible(False)
     cursorsp = pygame.image.load('Assets/Mpointer.png')
     cursor_rect = cursorsp.get_rect()
