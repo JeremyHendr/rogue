@@ -2,7 +2,7 @@ from Creature import Creature
 from time import *
 
 class Hero(Creature):
-    def __init__(self, name="Hero", abbrv="@", hp=100, maxhp=100, strength=20, inventory=None, max_invent=10, maxmana=20):
+    def __init__(self, name="Hero", abbrv="@", hp=100, maxhp=100, strength=20, inventory=None, max_invent=5, maxmana=20):
         from Weapon import Weapon
         from Armor import Armor
         Creature.__init__(self, name, hp, abbrv, strength)
